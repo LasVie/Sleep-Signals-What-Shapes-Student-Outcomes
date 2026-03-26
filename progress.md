@@ -4,7 +4,7 @@
 
 - Project: From Sleep to Scores
 - Updated: March 26, 2026
-- Status: repository scaffolded and pushed, product direction locked, redesign not yet implemented
+- Status: repository scaffolded and pushed, redesign baseline implemented
 
 ## What Was Reviewed
 
@@ -22,6 +22,10 @@
 - [x] Locked the MVP data scope to the local survey only.
 - [x] Documented the redesign direction as a guided storytelling site rather than an exploration-heavy dashboard.
 - [x] Created the remote GitHub repository and pushed the local repo.
+- [x] Built a new root site with `index.html`, `student.html`, `educator.html`, and `method.html`.
+- [x] Replaced the split educator structure with a ranked shortlist plus one row-normalized heatmap.
+- [x] Rewrote the student experience around four guided factors and one combined distribution chart.
+- [x] Added a `Data & Method` page with respondent profile, glossary, and caveats.
 
 ## Current Prototype Baseline
 
@@ -70,17 +74,16 @@ These observations should shape the redesign, but final story copy should be con
 
 ## Active Issues
 
-- [ ] The current prototype architecture is still a single HTML file and not the desired final structure.
-- [ ] The archived prototype contains benchmark content outside the locked MVP scope.
-- [ ] Some survey question wording needs explicit glossary support for clarity.
+- [ ] The archived prototype still contains benchmark content outside the locked MVP scope, even though the new site no longer uses it.
+- [ ] The live site still needs another pass of copy polish and presentation rehearsal against the final narrative.
+- [ ] Mobile and projector-scale QA should be repeated after any further chart or typography changes.
 - [ ] The dataset is imbalanced, which makes careful framing essential.
 
 ## Next Milestones
 
-- [ ] Build the redesigned site around the locked information architecture in [BRD.md](BRD.md).
-- [ ] Replace the split educator views with a single coherent factor-outcome evidence view.
-- [ ] Rewrite the student experience around 3-4 guided findings with larger typography and simpler explanations.
-- [ ] Add a transparent `Data & Method` page with glossary and limitations.
+- [ ] Refine chart copy, annotations, and section wording for the final presentation narrative.
+- [ ] Run another round of peer or instructor feedback on the new site structure.
+- [ ] Check final projector readability and mobile responsiveness after content polishing.
 - [x] Create the remote GitHub repository and push this local repo.
 
 ## Definition of Done For This Phase

@@ -1,8 +1,8 @@
-# From Sleep to Scores
+# Sleep Signals
 
 Interactive information visualization project for CS5346 on how sleep-related behaviors and daytime functioning relate to academic outcomes.
 
-This repository is now scaffolded as a local Git project. The remote GitHub repository still needs to be created and connected manually because this environment does not have GitHub CLI or authenticated GitHub access.
+This repository now contains a working multi-page redesign at the repo root, plus the archived prototype preserved in `prototype/` for reference.
 
 ## Team
 
@@ -24,7 +24,13 @@ The site is intended to raise awareness and support discussion. It is not a diag
 
 ## Current Status
 
-- Local Git repository initialized on March 26, 2026
+- Local Git repository initialized and pushed on March 26, 2026
+- New root pages added:
+  - [index.html](index.html)
+  - [student.html](student.html)
+  - [educator.html](educator.html)
+  - [method.html](method.html)
+- Shared site assets added under [assets](assets)
 - Existing prototype archived at [prototype/index_v2.html](prototype/index_v2.html)
 - Dataset stored at [data/Student Insomnia and Educational Outcomes Dataset_version-2.csv](data/Student%20Insomnia%20and%20Educational%20Outcomes%20Dataset_version-2.csv)
 - Midpoint references stored under [research](research)
@@ -65,7 +71,12 @@ These are the factors the new product should emphasize first, with concentration
 .
 ├── BRD.md
 ├── README.md
+├── educator.html
+├── index.html
+├── method.html
 ├── progress.md
+├── student.html
+├── assets/
 ├── data/
 ├── prototype/
 └── research/
@@ -73,19 +84,19 @@ These are the factors the new product should emphasize first, with concentration
 
 ## Quick Start
 
-To review the archived prototype locally:
+To run the redesigned site locally:
 
 ```bash
 python3 -m http.server 8000
 ```
 
-Then open `http://localhost:8000/prototype/index_v2.html`.
+Then open `http://localhost:8000/index.html`.
 
 Notes:
 
-- The archived prototype expects the CSV to be loaded manually.
-- Use the file picker in the page and select the dataset from `data/`.
-- The prototype is a reference artifact, not the final product architecture.
+- The redesigned pages fetch the CSV from `data/` automatically when served over HTTP.
+- The archived prototype is still available at `http://localhost:8000/prototype/index_v2.html`.
+- If you open the files directly with `file://`, browser fetch restrictions may block the data load.
 
 ## Key Documents
 

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sleep Signals | What Shapes Student Outcomes?</title>
+  <link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+  <header class="site-header">
+    <nav class="site-nav">
+      <a class="brand-lockup" href="index.html">
+        <span class="brand-mark">SS</span>
+        <span class="brand-text">
+          <small>CS5346 Information Visualisation</small>
+          <strong>Sleep Signals</strong>
+        </span>
+      </a>
+      <div class="nav-links">
+        <a class="nav-link active" href="index.html">Overview</a>
+        <a class="nav-link" href="student.html">Student</a>
+        <a class="nav-link" href="educator.html">Educator</a>
+        <a class="nav-link" href="method.html">Data &amp; Method</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="page-shell">
+    <section class="hero fade-up">
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <span class="eyebrow">From Sleep to Scores, redesigned as a guided story</span>
+          <h1>What in this survey actually lines up with worse student outcomes?</h1>
+          <p>
+            This site turns a 996-response sleep survey into a clearer narrative for two audiences.
+            Students get the short version first. Educators get the evidence view, the ordinal logic,
+            and the limitations in one place.
+          </p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="student.html">Start with the student view</a>
+            <a class="btn btn-secondary" href="educator.html">Open the educator view</a>
+            <a class="btn btn-secondary" href="method.html">See the dataset and method</a>
+          </div>
+        </div>
+
+        <aside class="hero-card">
+          <span class="section-kicker">Survey snapshot</span>
+          <h2>What the audience should know before any interaction.</h2>
+          <p>
+            The purpose here is early awareness, not diagnosis. These pages show associations inside one
+            university survey and should be read as signals worth discussing, not proof of cause.
+          </p>
+          <div class="stat-grid" id="heroStats">
+            <div class="loading-state">Loading survey profile…</div>
+          </div>
+          <p class="hero-note">
+            The strongest story in this dataset comes from daytime strain and daily habits, not from sleep duration alone.
+          </p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section fade-up">
+      <div class="section-head">
+        <div>
+          <span class="section-kicker">Headline findings</span>
+          <h2>Four patterns to anchor the whole site.</h2>
+        </div>
+        <p>
+          These cards use the same survey that powers the charts below. They are intentionally direct so the audience
+          understands the main message before they start exploring.
+        </p>
+      </div>
+      <div class="finding-grid" id="findingGrid">
+        <div class="loading-state">Loading findings…</div>
+      </div>
+    </section>
+
+    <section class="section fade-up">
+      <div class="section-head">
+        <div>
+          <span class="section-kicker">Site flow</span>
+          <h2>Three pages, three jobs.</h2>
+        </div>
+        <p>
+          The redesign avoids the old “show everything at once” prototype. Each page has a single role so the story stays legible.
+        </p>
+      </div>
+      <div class="route-grid">
+        <article class="route-card">
+          <span class="chip">Student</span>
+          <h3>Top habits and signals to watch</h3>
+          <p>
+            A smaller set of ranked factors, plain-language definitions, and one combined chart that shows how outcomes shift across factor levels.
+          </p>
+          <a class="route-link" href="student.html">Go to student view →</a>
+        </article>
+        <article class="route-card">
+          <span class="chip">Educator</span>
+          <h3>One evidence view, not split dashboards</h3>
+          <p>
+            Ranked factors and a single row-normalized heatmap sit together so educators can read pattern strength and distribution in the same place.
+          </p>
+          <a class="route-link" href="educator.html">Go to educator view →</a>
+        </article>
+        <article class="route-card">
+          <span class="chip">Transparency</span>
+          <h3>Method, skew, wording, and caveats</h3>
+          <p>
+            A dedicated reference page explains the sample, the questionnaire wording, the ordinal ranking method, and why this is not a causal claim.
+          </p>
+          <a class="route-link" href="method.html">Go to data &amp; method →</a>
+        </article>
+      </div>
+    </section>
+
+    <section class="section fade-up">
+      <div class="split-notes">
+        <article class="note-card">
+          <span class="section-kicker">Design commitments</span>
+          <h3>What changed from the archived prototype</h3>
+          <p>
+            Bigger type, fewer focal factors, clearer definitions, and a deliberate shift from broad exploration to guided storytelling.
+          </p>
+        </article>
+        <article class="note-card">
+          <span class="section-kicker">Interpretation guardrails</span>
+          <h3>What this site should not imply</h3>
+          <p>
+            Reverse causality is possible. High stress may worsen sleep, while poor sleep may worsen performance. This dataset is useful for pattern-finding, not diagnosis.
+          </p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    Sleep Signals uses the local survey dataset in <a href="data/Student%20Insomnia%20and%20Educational%20Outcomes%20Dataset_version-2.csv">data/</a>. The archived prototype remains available in <a href="prototype/index_v2.html">prototype/</a>.
+  </footer>
+
+  <script src="https://d3js.org/d3.v7.min.js" defer></script>
+  <script src="assets/data.js" defer></script>
+  <script src="assets/charts.js" defer></script>
+  <script src="assets/index.js" defer></script>
+</body>
+</html>

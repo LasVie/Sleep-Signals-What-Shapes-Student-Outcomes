@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sleep Signals | Student View</title>
+  <link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+  <header class="site-header">
+    <nav class="site-nav">
+      <a class="brand-lockup" href="index.html">
+        <span class="brand-mark">SS</span>
+        <span class="brand-text">
+          <small>CS5346 Information Visualisation</small>
+          <strong>Sleep Signals</strong>
+        </span>
+      </a>
+      <div class="nav-links">
+        <a class="nav-link" href="index.html">Overview</a>
+        <a class="nav-link active" href="student.html">Student</a>
+        <a class="nav-link" href="educator.html">Educator</a>
+        <a class="nav-link" href="method.html">Data &amp; Method</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="page-shell">
+    <section class="hero fade-up">
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <span class="eyebrow">Student view</span>
+          <h1>Start with the clearest signals, not the whole dashboard.</h1>
+          <p>
+            Choose the outcome you care about, then compare the four primary factors this redesign wants to foreground.
+            The chart below shows how the outcome split changes inside each factor level.
+          </p>
+        </div>
+        <aside class="hero-card">
+          <span class="section-kicker">How to read this page</span>
+          <h2>Every bar sums to 100% within one factor level.</h2>
+          <p>
+            That means you do not need to decode statistics first. You only need to compare how the worse outcome colors expand or shrink as the factor changes.
+          </p>
+          <div class="pill-row">
+            <span class="sample-pill" id="studentSample">Filtered sample: —</span>
+            <span class="meta-pill" id="studentOutcomeDef">Outcome definition: —</span>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section fade-up">
+      <div class="controls-panel">
+        <div class="section-head">
+          <div>
+            <span class="section-kicker">Guided controls</span>
+            <h2>Keep the filter set small.</h2>
+          </div>
+          <p>
+            The student view only keeps the switches that still help interpretation. It defaults to academic performance.
+          </p>
+        </div>
+        <div class="controls-grid">
+          <div class="field">
+            <label for="studentOutcome">Outcome</label>
+            <select id="studentOutcome"></select>
+          </div>
+          <div class="field">
+            <label for="studentYear">Year of study</label>
+            <select id="studentYear"></select>
+          </div>
+          <div class="field">
+            <label>Why these factors</label>
+            <div class="sample-pill">The four primary factors from the BRD only</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section fade-up">
+      <div class="section-head">
+        <div>
+          <span class="section-kicker">Ranked shortlist</span>
+          <h2>Top habits and signals to watch</h2>
+        </div>
+        <p>
+          These cards are ranked for the current outcome selection. Click any card to update the chart and explanation below.
+        </p>
+      </div>
+      <div class="insight-grid" id="studentCards">
+        <div class="loading-state">Loading ranked factors…</div>
+      </div>
+    </section>
+
+    <section class="section fade-up">
+      <div class="viz-layout">
+        <aside class="note-card" id="studentSummary">
+          <div class="loading-state">Loading explanation…</div>
+        </aside>
+        <article class="chart-card">
+          <span class="section-kicker">Combined distribution</span>
+          <h3 id="studentChartTitle">Factor vs outcome split</h3>
+          <p id="studentChartCopy">
+            Each row shows the outcome mix within one factor level.
+          </p>
+          <div class="legend" id="studentLegend"></div>
+          <div class="chart-shell" id="studentChart"></div>
+          <p class="footnote">
+            Cooler tones indicate better outcomes, warmer tones indicate worse outcomes. Read each row from left to right, not as a causal timeline.
+          </p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    Need the full survey wording or sample profile? Open <a href="method.html">Data &amp; Method</a>.
+  </footer>
+
+  <script src="https://d3js.org/d3.v7.min.js" defer></script>
+  <script src="assets/data.js" defer></script>
+  <script src="assets/charts.js" defer></script>
+  <script src="assets/student.js" defer></script>
+</body>
+</html>
