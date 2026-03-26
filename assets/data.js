@@ -1,6 +1,4 @@
 (function () {
-  const DATA_URL = "data/Student%20Insomnia%20and%20Educational%20Outcomes%20Dataset_version-2.csv";
-
   const COLUMNS = {
     year: "1. What is your year of study?",
     gender: "2. What is your gender?",
@@ -172,25 +170,34 @@
   const SCOPED_FACTOR_KEYS = FACTORS.map((factor) => factor.key);
   const FACTOR_MAP = Object.fromEntries(FACTORS.map((factor) => [factor.key, factor]));
   const OUTCOME_MAP = Object.fromEntries(OUTCOMES.map((outcome) => [outcome.key, outcome]));
+  const BENCHMARKS = Array.isArray(window.SleepSignalsBenchmarkRows)
+    ? window.SleepSignalsBenchmarkRows
+    : [];
 
   let cachedRows = null;
+  let cachedBenchmarks = null;
 
   async function loadSurveyData() {
     if (cachedRows) return cachedRows;
-    const response = await fetch(DATA_URL);
-    if (!response.ok) {
-      throw new Error("Could not load the survey CSV. Serve the repo with a local web server so the browser can fetch the data file.");
+    const dataset = window.SleepSignalsSurveyRows;
+    if (!Array.isArray(dataset) || !dataset.length) {
+      throw new Error(
+        "Bundled survey data is missing. Make sure data/local-survey-bundle.js is loaded before assets/data.js."
+      );
     }
-    const text = await response.text();
-    cachedRows = d3.csvParse(text).map((row) => {
-      const cleaned = {};
-      Object.keys(row).forEach((key) => {
-        const trimmedKey = key.trim();
-        cleaned[trimmedKey] = (row[key] ?? "").trim();
-      });
-      return cleaned;
-    });
+    cachedRows = dataset.map((row) => ({ ...row }));
     return cachedRows;
+  }
+
+  async function loadBenchmarkData() {
+    if (cachedBenchmarks) return cachedBenchmarks;
+    if (!BENCHMARKS.length) {
+      throw new Error(
+        "Bundled benchmark data is missing. Make sure data/global-sleep-benchmarks.js is loaded before assets/data.js."
+      );
+    }
+    cachedBenchmarks = BENCHMARKS.map((entry) => ({ ...entry }));
+    return cachedBenchmarks;
   }
 
   function getFactor(key) {
@@ -473,16 +480,17 @@
   }
 
   window.SleepSignalsData = {
-    DATA_URL,
     COLUMNS,
     GROUPS,
     FACTORS,
     OUTCOMES,
+    BENCHMARKS,
     YEAR_ORDER,
     GENDER_ORDER,
     PRIMARY_FACTOR_KEYS,
     SCOPED_FACTOR_KEYS,
     loadSurveyData,
+    loadBenchmarkData,
     getFactor,
     getOutcome,
     getOptions,

@@ -1,5 +1,13 @@
 (function () {
   const OUTCOME_COLORS_5 = ["#2b7a78", "#8bb7b0", "#d8d2c6", "#d99664", "#b85a3d"];
+  const REGION_COLORS = {
+    Asia: "#2b7a78",
+    Europe: "#4c7a9f",
+    "North America": "#b85a3d",
+    "Latin America": "#d59a52",
+    Africa: "#5e7f60",
+    Oceania: "#7f6fa6",
+  };
 
   function escapeHtml(value) {
     return String(value).replace(/[&<>"']/g, (character) => {
@@ -357,11 +365,154 @@
     });
   }
 
+  function renderBenchmarkScatter(element, options) {
+    const { rows, yKey, yLabel, selectedCountry, onSelect } = options;
+    element.innerHTML = "";
+    if (!rows.length) {
+      element.innerHTML = `<div class="loading-state">No benchmark records available for this filter selection.</div>`;
+      return;
+    }
+
+    const width = Math.max(element.clientWidth || 840, 680);
+    const height = 520;
+    const margin = { top: 30, right: 30, bottom: 68, left: 72 };
+    const innerWidth = width - margin.left - margin.right;
+    const innerHeight = height - margin.top - margin.bottom;
+    const maxStudents = d3.max(rows, (row) => row.n_students) || 1;
+    const x = d3
+      .scaleLinear()
+      .domain(d3.extent(rows, (row) => row.avg_sleep_hrs))
+      .nice()
+      .range([0, innerWidth]);
+    const y = d3
+      .scaleLinear()
+      .domain(d3.extent(rows, (row) => row[yKey]))
+      .nice()
+      .range([innerHeight, 0]);
+    const size = d3.scaleSqrt().domain([0, maxStudents]).range([7, 24]);
+
+    const svg = d3
+      .select(element)
+      .append("svg")
+      .attr("viewBox", `0 0 ${width} ${height}`)
+      .attr("role", "img")
+      .attr("aria-label", `${yLabel} benchmark scatter plot`);
+
+    const root = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+
+    root
+      .append("g")
+      .attr("transform", `translate(0,${innerHeight})`)
+      .call(d3.axisBottom(x).ticks(6))
+      .call((group) => {
+        group.select(".domain").attr("stroke", "rgba(19,36,49,0.18)");
+        group.selectAll("line").attr("stroke", "rgba(19,36,49,0.18)");
+        group.selectAll("text").attr("fill", "#455764").attr("font-size", 11);
+      });
+
+    root
+      .append("g")
+      .call(d3.axisLeft(y).ticks(6))
+      .call((group) => {
+        group.select(".domain").attr("stroke", "rgba(19,36,49,0.18)");
+        group.selectAll("line").attr("stroke", "rgba(19,36,49,0.18)");
+        group.selectAll("text").attr("fill", "#455764").attr("font-size", 11);
+      });
+
+    root
+      .append("g")
+      .selectAll("line.x-grid")
+      .data(x.ticks(6))
+      .join("line")
+      .attr("x1", (value) => x(value))
+      .attr("x2", (value) => x(value))
+      .attr("y1", 0)
+      .attr("y2", innerHeight)
+      .attr("stroke", "rgba(19,36,49,0.06)")
+      .attr("stroke-dasharray", "4,4");
+
+    root
+      .append("g")
+      .selectAll("line.y-grid")
+      .data(y.ticks(6))
+      .join("line")
+      .attr("x1", 0)
+      .attr("x2", innerWidth)
+      .attr("y1", (value) => y(value))
+      .attr("y2", (value) => y(value))
+      .attr("stroke", "rgba(19,36,49,0.06)")
+      .attr("stroke-dasharray", "4,4");
+
+    const circles = root
+      .selectAll("circle")
+      .data(rows)
+      .join("circle")
+      .attr("cx", (row) => x(row.avg_sleep_hrs))
+      .attr("cy", (row) => y(row[yKey]))
+      .attr("r", (row) => size(row.n_students))
+      .attr("fill", (row) => REGION_COLORS[row.region] || "#4c7a9f")
+      .attr("fill-opacity", (row) => (row.country === selectedCountry ? 0.94 : 0.78))
+      .attr("stroke", (row) => (row.country === selectedCountry ? "#132431" : "#fffaf5"))
+      .attr("stroke-width", (row) => (row.country === selectedCountry ? 3 : row.is_primary ? 2.5 : 1.5))
+      .style("cursor", "pointer")
+      .on("mousemove", (event, row) => {
+        showTooltip(
+          event,
+          `<strong>${escapeHtml(row.country)}</strong>${escapeHtml(row.region)}<br>${escapeHtml(
+            yLabel
+          )}: ${row[yKey]}<br>Average sleep: ${row.avg_sleep_hrs}h<br><span class="muted">n = ${row.n_students.toLocaleString()} · ${row.year}</span>`
+        );
+      })
+      .on("mouseleave", hideTooltip)
+      .on("click", (_, row) => {
+        if (typeof onSelect === "function") onSelect(row.country);
+      });
+
+    root
+      .selectAll("text.point-label")
+      .data(rows.filter((row) => row.is_primary || row.country === selectedCountry))
+      .join("text")
+      .attr("class", "point-label")
+      .attr("x", (row) => x(row.avg_sleep_hrs) + size(row.n_students) + 6)
+      .attr("y", (row) => y(row[yKey]) + 4)
+      .attr("fill", "#132431")
+      .attr("font-size", 11)
+      .attr("font-weight", 700)
+      .text((row) => row.country);
+
+    svg
+      .append("text")
+      .attr("x", width / 2)
+      .attr("y", height - 14)
+      .attr("text-anchor", "middle")
+      .attr("fill", "#6f7f88")
+      .attr("font-size", 12)
+      .text("Average sleep hours");
+
+    svg
+      .append("text")
+      .attr("transform", `translate(18, ${height / 2}) rotate(-90)`)
+      .attr("text-anchor", "middle")
+      .attr("fill", "#6f7f88")
+      .attr("font-size", 12)
+      .text(yLabel);
+
+    svg
+      .append("text")
+      .attr("x", margin.left)
+      .attr("y", 18)
+      .attr("fill", "#6f7f88")
+      .attr("font-size", 12)
+      .text("Bubble size scales with sample size");
+  }
+
   window.SleepSignalsCharts = {
     outcomeColors,
+    REGION_COLORS,
     renderLegend,
     renderStackedOutcomeChart,
     renderHeatmap,
+    renderBenchmarkScatter,
     renderBarList,
     escapeHtml,
   };

@@ -20,6 +20,7 @@
         <a class="nav-link" href="index.html">Overview</a>
         <a class="nav-link active" href="student.html">Student</a>
         <a class="nav-link" href="educator.html">Educator</a>
+        <a class="nav-link" href="context.html">Global Context</a>
         <a class="nav-link" href="method.html">Data &amp; Method</a>
       </div>
     </nav>
@@ -33,7 +34,7 @@
           <h1>Start with the clearest signals, not the whole dashboard.</h1>
           <p>
             Choose the outcome you care about, then compare the four primary factors this redesign wants to foreground.
-            The chart below shows how the outcome split changes inside each factor level.
+            The chart below shows how the outcome split changes inside each factor level, with lightweight year and gender filtering to keep the story interactive without turning back into a dashboard.
           </p>
         </div>
         <aside class="hero-card">
@@ -69,6 +70,10 @@
           <div class="field">
             <label for="studentYear">Year of study</label>
             <select id="studentYear"></select>
+          </div>
+          <div class="field">
+            <label for="studentGender">Gender</label>
+            <select id="studentGender"></select>
           </div>
           <div class="field">
             <label>Why these factors</label>
@@ -115,10 +120,11 @@
   </main>
 
   <footer class="site-footer">
-    Need the full survey wording or sample profile? Open <a href="method.html">Data &amp; Method</a>.
+    Need the full survey wording or sample profile? Open <a href="method.html">Data &amp; Method</a>. Want to place the sample in a wider benchmark? Open <a href="context.html">Global Context</a>.
   </footer>
 
-  <script src="https://d3js.org/d3.v7.min.js" defer></script>
+  <script src="assets/vendor/d3.v7.min.js" defer></script>
+  <script src="data/local-survey-bundle.js" defer></script>
   <script src="assets/data.js" defer></script>
   <script src="assets/charts.js" defer></script>
   <script src="assets/student.js" defer></script>

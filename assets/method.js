@@ -3,12 +3,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     FACTORS,
     OUTCOMES,
     loadSurveyData,
+    loadBenchmarkData,
     profileCounts,
     computeHeadlineStats,
   } = window.SleepSignalsData;
   const { renderBarList } = window.SleepSignalsCharts;
 
   const methodStatsElement = document.getElementById("methodStats");
+  const dataSourceElement = document.getElementById("dataSourceGrid");
+  const benchmarkRegionProfileElement = document.getElementById("benchmarkRegionProfile");
   const yearProfileElement = document.getElementById("yearProfile");
   const genderProfileElement = document.getElementById("genderProfile");
   const performanceProfileElement = document.getElementById("performanceProfile");
@@ -16,15 +19,20 @@ document.addEventListener("DOMContentLoaded", async () => {
   const glossaryElement = document.getElementById("glossaryGrid");
 
   try {
-    const rows = await loadSurveyData();
+    const [rows, benchmarkRows] = await Promise.all([
+      loadSurveyData(),
+      loadBenchmarkData().catch(() => []),
+    ]);
     const stats = computeHeadlineStats(rows);
     const profiles = profileCounts(rows);
+    const regionCount = new Set(benchmarkRows.map((row) => row.region)).size;
 
     methodStatsElement.innerHTML = `
       <span class="section-kicker">Dataset snapshot</span>
       <h2>What this sample can support, and what it cannot.</h2>
       <p>
-        The dataset is useful for comparing ordinal patterns across habits, sleep signals, and outcomes. It is not balanced enough for strong causal claims.
+        The core survey is useful for comparing ordinal patterns across habits, sleep signals, and outcomes.
+        The live site now pairs that survey with a benchmark layer for broader geographic context.
       </p>
       <div class="stat-grid">
         ${stats
@@ -38,11 +46,65 @@ document.addEventListener("DOMContentLoaded", async () => {
             `;
           })
           .join("")}
+        <article class="stat-card">
+          <div class="stat-label">Benchmark coverage</div>
+          <div class="stat-value">${benchmarkRows.length}</div>
+          <div class="stat-copy">${regionCount} regions now provide cross-country context for the main survey story.</div>
+        </article>
       </div>
       <p class="hero-note">
         Year-of-study and gender distributions are both skewed. Those imbalances are part of the reason the site keeps its tone descriptive rather than predictive.
+        The benchmark layer widens scope, but its records still come from different studies and should be read comparatively.
       </p>
     `;
+
+    if (benchmarkRows.length) {
+      const regionCounts = [...new Set(benchmarkRows.map((row) => row.region))]
+        .map((region) => ({
+          label: region,
+          count: benchmarkRows.filter((row) => row.region === region).length,
+        }))
+        .sort((left, right) => d3.descending(left.count, right.count))
+        .map((entry) => ({
+          ...entry,
+          pct: entry.count / benchmarkRows.length,
+        }));
+
+      dataSourceElement.innerHTML = `
+        <span class="section-kicker">Source overview</span>
+        <h3 class="panel-title">Two evidence layers, two different jobs</h3>
+        <div class="bar-list">
+          <div class="bar-row">
+            <div class="bar-topline">
+              <span>Primary survey</span>
+              <span>996 responses</span>
+            </div>
+            <p class="small-copy">
+              Used for the ranked factors, student view, and educator heatmap. This remains the main analytic source.
+            </p>
+          </div>
+          <div class="bar-row">
+            <div class="bar-topline">
+              <span>Benchmark layer</span>
+              <span>${benchmarkRows.length} country records</span>
+            </div>
+            <p class="small-copy">
+              Used only for comparative context. These records come from different studies and are not treated as one pooled harmonized sample.
+            </p>
+          </div>
+        </div>
+      `;
+      renderBarList(benchmarkRegionProfileElement, regionCounts, "#d59a52", "#2b7a78");
+    } else {
+      dataSourceElement.innerHTML = `
+        <span class="section-kicker">Source overview</span>
+        <h3 class="panel-title">Primary survey loaded</h3>
+        <p class="small-copy">
+          The survey layer is available, but the benchmark layer was not loaded in this run.
+        </p>
+      `;
+      benchmarkRegionProfileElement.innerHTML = `<div class="error-state">Benchmark coverage is unavailable.</div>`;
+    }
 
     renderBarList(yearProfileElement, profiles.year, "#4c7a9f", "#2b7a78");
     renderBarList(genderProfileElement, profiles.gender, "#4c7a9f", "#2b7a78");
@@ -81,6 +143,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   } catch (error) {
     const message = `<div class="error-state">${window.SleepSignalsCharts.escapeHtml(error.message)}</div>`;
     methodStatsElement.innerHTML = message;
+    dataSourceElement.innerHTML = message;
+    benchmarkRegionProfileElement.innerHTML = message;
     yearProfileElement.innerHTML = message;
     genderProfileElement.innerHTML = message;
     performanceProfileElement.innerHTML = message;

@@ -20,6 +20,7 @@
         <a class="nav-link active" href="index.html">Overview</a>
         <a class="nav-link" href="student.html">Student</a>
         <a class="nav-link" href="educator.html">Educator</a>
+        <a class="nav-link" href="context.html">Global Context</a>
         <a class="nav-link" href="method.html">Data &amp; Method</a>
       </div>
     </nav>
@@ -32,29 +33,30 @@
           <span class="eyebrow">From Sleep to Scores, redesigned as a guided story</span>
           <h1>What in this survey actually lines up with worse student outcomes?</h1>
           <p>
-            This site turns a 996-response sleep survey into a clearer narrative for two audiences.
+            This site now combines a 996-response local survey with a cross-country benchmark layer.
             Students get the short version first. Educators get the evidence view, the ordinal logic,
-            and the limitations in one place.
+            and the broader context in one place.
           </p>
           <div class="hero-actions">
             <a class="btn btn-primary" href="student.html">Start with the student view</a>
             <a class="btn btn-secondary" href="educator.html">Open the educator view</a>
+            <a class="btn btn-secondary" href="context.html">Compare global context</a>
             <a class="btn btn-secondary" href="method.html">See the dataset and method</a>
           </div>
         </div>
 
         <aside class="hero-card">
-          <span class="section-kicker">Survey snapshot</span>
+          <span class="section-kicker">Two-layer evidence base</span>
           <h2>What the audience should know before any interaction.</h2>
           <p>
-            The purpose here is early awareness, not diagnosis. These pages show associations inside one
-            university survey and should be read as signals worth discussing, not proof of cause.
+            The purpose here is early awareness, not diagnosis. The root story still comes from the local survey,
+            but the new benchmark layer helps position that survey against reported student-sleep patterns in other countries.
           </p>
           <div class="stat-grid" id="heroStats">
             <div class="loading-state">Loading survey profile…</div>
           </div>
           <p class="hero-note">
-            The strongest story in this dataset comes from daytime strain and daily habits, not from sleep duration alone.
+            The strongest story still comes from daytime strain and daily habits, but the new benchmark view widens the scope beyond one sample.
           </p>
         </aside>
       </div>
@@ -80,10 +82,10 @@
       <div class="section-head">
         <div>
           <span class="section-kicker">Site flow</span>
-          <h2>Three pages, three jobs.</h2>
+          <h2>Four pages, four jobs.</h2>
         </div>
         <p>
-          The redesign avoids the old “show everything at once” prototype. Each page has a single role so the story stays legible.
+          The redesign avoids the old “show everything at once” prototype. Each page now has one clear job so the story stays legible.
         </p>
       </div>
       <div class="route-grid">
@@ -111,6 +113,14 @@
           </p>
           <a class="route-link" href="method.html">Go to data &amp; method →</a>
         </article>
+        <article class="route-card">
+          <span class="chip">Global context</span>
+          <h3>Compare the local survey to other countries</h3>
+          <p>
+            An interactive benchmark scatter plot shows how average sleep, reported insomnia burden, academic pressure, and sleep-linked academic impact compare across countries.
+          </p>
+          <a class="route-link" href="context.html">Go to global context →</a>
+        </article>
       </div>
     </section>
 
@@ -135,10 +145,12 @@
   </main>
 
   <footer class="site-footer">
-    Sleep Signals uses the local survey dataset in <a href="data/Student%20Insomnia%20and%20Educational%20Outcomes%20Dataset_version-2.csv">data/</a>. The archived prototype remains available in <a href="prototype/index_v2.html">prototype/</a>.
+    Sleep Signals uses the local survey dataset in <a href="data/Student%20Insomnia%20and%20Educational%20Outcomes%20Dataset_version-2.csv">data/</a>, plus a bundled benchmark dataset for cross-country context. The archived prototype remains available in <a href="prototype/index_v2.html">prototype/</a>.
   </footer>
 
-  <script src="https://d3js.org/d3.v7.min.js" defer></script>
+  <script src="assets/vendor/d3.v7.min.js" defer></script>
+  <script src="data/local-survey-bundle.js" defer></script>
+  <script src="data/global-sleep-benchmarks.js" defer></script>
   <script src="assets/data.js" defer></script>
   <script src="assets/charts.js" defer></script>
   <script src="assets/index.js" defer></script>

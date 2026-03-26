@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const {
     OUTCOMES,
     YEAR_ORDER,
+    GENDER_ORDER,
     COLUMNS,
     PRIMARY_FACTOR_KEYS,
     loadSurveyData,
@@ -18,6 +19,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const outcomeSelect = document.getElementById("studentOutcome");
   const yearSelect = document.getElementById("studentYear");
+  const genderSelect = document.getElementById("studentGender");
   const sampleElement = document.getElementById("studentSample");
   const outcomeDefElement = document.getElementById("studentOutcomeDef");
   const cardsElement = document.getElementById("studentCards");
@@ -31,6 +33,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     rows: [],
     outcomeKey: "perf",
     year: "All",
+    gender: "All",
     factorKey: null,
   };
 
@@ -43,7 +46,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   outcomeSelect.value = state.outcomeKey;
 
   function renderStudent() {
-    const filtered = filterRows(state.rows, { year: state.year });
+    const filtered = filterRows(state.rows, {
+      year: state.year,
+      gender: state.gender,
+    });
     const ranking = computeRanking(filtered, state.outcomeKey, PRIMARY_FACTOR_KEYS);
     const outcome = getOutcome(state.outcomeKey);
 
@@ -145,6 +151,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     renderStudent();
   });
 
+  genderSelect.addEventListener("change", (event) => {
+    state.gender = event.target.value;
+    renderStudent();
+  });
+
   window.addEventListener("resize", () => {
     if (state.rows.length) renderStudent();
   });
@@ -157,6 +168,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       option.value = year;
       option.textContent = year === "All" ? "All years" : year;
       yearSelect.appendChild(option);
+    });
+
+    ["All", ...getOptions(state.rows, COLUMNS.gender, GENDER_ORDER)].forEach((gender) => {
+      const option = document.createElement("option");
+      option.value = gender;
+      option.textContent = gender === "All" ? "All genders" : gender;
+      genderSelect.appendChild(option);
     });
     renderStudent();
   } catch (error) {

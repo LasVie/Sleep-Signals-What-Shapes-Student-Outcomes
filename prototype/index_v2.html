@@ -526,7 +526,13 @@ function buildGroupedSelect(el,sel){
    LOADING
 ══════════════════════════════════════════════════════ */
 async function tryAutoLoad(){
-  const names=["Student_Insomnia_and_Educational_Outcomes_Dataset_version2.csv","Student Insomnia and Educational Outcomes Dataset_version2.csv","Student_Insomnia_and_Educational_Outcomes_Dataset.csv"];
+  const names=[
+    "../data/Student Insomnia and Educational Outcomes Dataset_version-2.csv",
+    "../data/Student_Insomnia_and_Educational_Outcomes_Dataset_version-2.csv",
+    "Student_Insomnia_and_Educational_Outcomes_Dataset_version2.csv",
+    "Student Insomnia and Educational Outcomes Dataset_version2.csv",
+    "Student_Insomnia_and_Educational_Outcomes_Dataset.csv"
+  ];
   for(const n of names){try{const r=await fetch(n);if(!r.ok)continue;parseCsv(await r.text());return;}catch(_){}}
 }
 $("fileInput").addEventListener("change",async e=>{const f=e.target.files?.[0];if(!f)return;parseCsv(await f.text());});
