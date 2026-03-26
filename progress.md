@@ -4,29 +4,24 @@
 
 - Project: From Sleep to Scores
 - Updated: March 26, 2026
-- Status: repository scaffolded, product direction locked, redesign not yet implemented
+- Status: repository scaffolded and pushed, product direction locked, redesign not yet implemented
 
 ## What Was Reviewed
 
-- Midpoint slide deck in [research/Midpoint Presentation.pdf](research/Midpoint%20Presentation.pdf)
-- Teaching-team feedback in [research/Comments from teaching team.docx](research/Comments%20from%20teaching%20team.docx)
-- Archived prototype in [prototype/index_v2.html](prototype/index_v2.html)
-- Survey dataset in [data/Student Insomnia and Educational Outcomes Dataset_version-2.csv](data/Student%20Insomnia%20and%20Educational%20Outcomes%20Dataset_version-2.csv)
+- [x] Midpoint slide deck in [research/Midpoint Presentation.pdf](research/Midpoint%20Presentation.pdf)
+- [x] Teaching-team feedback in [research/Comments from teaching team.docx](research/Comments%20from%20teaching%20team.docx)
+- [x] Archived prototype in [prototype/index_v2.html](prototype/index_v2.html)
+- [x] Survey dataset in [data/Student Insomnia and Educational Outcomes Dataset_version-2.csv](data/Student%20Insomnia%20and%20Educational%20Outcomes%20Dataset_version-2.csv)
 
 ## Completed
 
-- Initialized a local Git repository in the project folder.
-- Reorganized the working files into:
-  - `prototype/`
-  - `data/`
-  - `research/`
-- Added root project documentation:
-  - `README.md`
-  - `BRD.md`
-  - `progress.md`
-- Locked the v1 audience model to `Student` and `Educator`.
-- Locked the MVP data scope to the local survey only.
-- Documented the redesign direction as a guided storytelling site rather than an exploration-heavy dashboard.
+- [x] Initialized a local Git repository in the project folder.
+- [x] Reorganized the working files into `prototype/`, `data/`, and `research/`.
+- [x] Added root project documentation: `README.md`, `BRD.md`, and `progress.md`.
+- [x] Locked the v1 audience model to `Student` and `Educator`.
+- [x] Locked the MVP data scope to the local survey only.
+- [x] Documented the redesign direction as a guided storytelling site rather than an exploration-heavy dashboard.
+- [x] Created the remote GitHub repository and pushed the local repo.
 
 ## Current Prototype Baseline
 
@@ -75,23 +70,22 @@ These observations should shape the redesign, but final story copy should be con
 
 ## Active Issues
 
-- No remote GitHub repository has been created yet.
-- The current prototype architecture is still a single HTML file and not the desired final structure.
-- The archived prototype contains benchmark content outside the locked MVP scope.
-- Some survey question wording needs explicit glossary support for clarity.
-- The dataset is imbalanced, which makes careful framing essential.
+- [ ] The current prototype architecture is still a single HTML file and not the desired final structure.
+- [ ] The archived prototype contains benchmark content outside the locked MVP scope.
+- [ ] Some survey question wording needs explicit glossary support for clarity.
+- [ ] The dataset is imbalanced, which makes careful framing essential.
 
 ## Next Milestones
 
-1. Build the redesigned site around the locked information architecture in [BRD.md](BRD.md).
-2. Replace the split educator views with a single coherent factor-outcome evidence view.
-3. Rewrite the student experience around 3-4 guided findings with larger typography and simpler explanations.
-4. Add a transparent `Data & Method` page with glossary and limitations.
-5. Create the remote GitHub repository manually and push this local repo.
+- [ ] Build the redesigned site around the locked information architecture in [BRD.md](BRD.md).
+- [ ] Replace the split educator views with a single coherent factor-outcome evidence view.
+- [ ] Rewrite the student experience around 3-4 guided findings with larger typography and simpler explanations.
+- [ ] Add a transparent `Data & Method` page with glossary and limitations.
+- [x] Create the remote GitHub repository and push this local repo.
 
 ## Definition of Done For This Phase
 
-- Repo is locally initialized and organized.
-- Core documentation exists at the repository root.
-- The product direction is explicit enough for implementation without revisiting midpoint ambiguity.
-- The current prototype is preserved as a reference artifact instead of being treated as the final product.
+- [x] Repo is locally initialized and organized.
+- [x] Core documentation exists at the repository root.
+- [x] The product direction is explicit enough for implementation without revisiting midpoint ambiguity.
+- [x] The current prototype is preserved as a reference artifact instead of being treated as the final product.
