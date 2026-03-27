@@ -1,12 +1,12 @@
 (function () {
-  const OUTCOME_COLORS_5 = ["#2b7a78", "#8bb7b0", "#d8d2c6", "#d99664", "#b85a3d"];
+  const OUTCOME_COLORS_5 = ["#2dd4bf", "#60a5fa", "#475569", "#fb923c", "#f87171"];
   const REGION_COLORS = {
-    Asia: "#2b7a78",
-    Europe: "#4c7a9f",
-    "North America": "#b85a3d",
-    "Latin America": "#d59a52",
-    Africa: "#5e7f60",
-    Oceania: "#7f6fa6",
+    Asia: "#2dd4bf",
+    Europe: "#60a5fa",
+    "North America": "#f87171",
+    "Latin America": "#fbbf24",
+    Africa: "#34d399",
+    Oceania: "#a78bfa",
   };
 
   function escapeHtml(value) {
@@ -75,7 +75,7 @@
 
     const width = Math.max(element.clientWidth || 720, 620);
     const height = Math.max(360, matrix.length * 74 + 92);
-    const margin = { top: 34, right: 42, bottom: 40, left: 240 };
+    const margin = { top: 34, right: 42, bottom: 56, left: 240 };
     const innerWidth = width - margin.left - margin.right;
     const innerHeight = height - margin.top - margin.bottom;
     const colors = outcomeColors(outcome.order.length);
@@ -105,9 +105,9 @@
           .tickFormat((value) => `${Math.round(value * 100)}%`)
       )
       .call((group) => {
-        group.select(".domain").attr("stroke", "rgba(19,36,49,0.18)");
-        group.selectAll("line").attr("stroke", "rgba(19,36,49,0.18)");
-        group.selectAll("text").attr("fill", "#455764").attr("font-size", 11);
+        group.select(".domain").attr("stroke", "rgba(255,255,255,0.12)");
+        group.selectAll("line").attr("stroke", "rgba(255,255,255,0.12)");
+        group.selectAll("text").attr("fill", "#7a9bbf").attr("font-size", 11);
       });
 
     root
@@ -117,7 +117,7 @@
         group.select(".domain").remove();
         group
           .selectAll("text")
-          .attr("fill", "#132431")
+          .attr("fill", "#c8daf0")
           .attr("font-size", 13)
           .attr("font-weight", 600)
           .style("text-transform", "none");
@@ -132,7 +132,7 @@
       .attr("x2", (value) => x(value))
       .attr("y1", 0)
       .attr("y2", innerHeight)
-      .attr("stroke", "rgba(19,36,49,0.08)")
+      .attr("stroke", "rgba(255,255,255,0.06)")
       .attr("stroke-dasharray", "4,4");
 
     matrix.forEach((rowSummary) => {
@@ -166,7 +166,7 @@
             .attr("x", x(currentOffset) + segmentWidth / 2)
             .attr("y", y(rowSummary.factorLevel) + y.bandwidth() / 2 + 4)
             .attr("text-anchor", "middle")
-            .attr("fill", index >= 3 ? "#fffaf5" : "#132431")
+            .attr("fill", index >= 3 ? "#0d1520" : "#e4eaf5")
             .attr("font-size", 11)
             .attr("font-weight", 700)
             .text(`${Math.round(percentage * 100)}%`);
@@ -179,18 +179,29 @@
         .append("text")
         .attr("x", innerWidth + 8)
         .attr("y", y(rowSummary.factorLevel) + y.bandwidth() / 2 + 4)
-        .attr("fill", "#6f7f88")
+        .attr("fill", "#3d5a78")
         .attr("font-size", 11)
         .text(`n=${rowSummary.total}`);
     });
 
     svg
       .append("text")
-      .attr("x", margin.left)
-      .attr("y", 20)
-      .attr("fill", "#6f7f88")
-      .attr("font-size", 12)
-      .text("Share within each factor level");
+      .attr("x", margin.left + innerWidth / 2)
+      .attr("y", height - 10)
+      .attr("text-anchor", "middle")
+      .attr("fill", "#455764")
+      .attr("font-size", 13)
+      .attr("font-weight", 700)
+      .text("Share of responses per outcome level (%)");
+
+    svg
+      .append("text")
+      .attr("transform", `translate(16, ${margin.top + innerHeight / 2}) rotate(-90)`)
+      .attr("text-anchor", "middle")
+      .attr("fill", "#455764")
+      .attr("font-size", 13)
+      .attr("font-weight", 700)
+      .text(factor.label);
   }
 
   function renderHeatmap(element, options) {
@@ -231,14 +242,14 @@
       }));
     });
     const maxPct = d3.max(flat, (cell) => cell.pct) || 1;
-    const color = d3.scaleSequential().domain([0, maxPct]).interpolator(d3.interpolatePuBuGn);
+    const color = d3.scaleSequential().domain([0, maxPct]).interpolator(d3.interpolateRgb("#0d1a30", "#00c4a0"));
 
     root
       .append("g")
       .call(d3.axisLeft(y).tickSize(0))
       .call((group) => {
         group.select(".domain").remove();
-        group.selectAll("text").attr("fill", "#132431").attr("font-size", 13).attr("font-weight", 600);
+        group.selectAll("text").attr("fill", "#c8daf0").attr("font-size", 13).attr("font-weight", 600);
       });
 
     root
@@ -246,7 +257,7 @@
       .call(d3.axisTop(x).tickSize(0))
       .call((group) => {
         group.select(".domain").remove();
-        group.selectAll("text").attr("fill", "#132431").attr("font-size", 12).attr("font-weight", 700);
+        group.selectAll("text").attr("fill", "#c8daf0").attr("font-size", 12).attr("font-weight", 700);
       });
 
     root
@@ -280,7 +291,7 @@
       .attr("text-anchor", "middle")
       .attr("font-size", 11)
       .attr("font-weight", 700)
-      .attr("fill", (cell) => (cell.pct > maxPct * 0.55 ? "#fffaf5" : "#132431"))
+      .attr("fill", (cell) => (cell.pct > maxPct * 0.55 ? "#0d1520" : "#c8daf0"))
       .text((cell) => (cell.pct >= 0.05 ? `${Math.round(cell.pct * 100)}%` : ""));
 
     matrix.forEach((rowSummary) => {
@@ -288,7 +299,7 @@
         .append("text")
         .attr("x", innerWidth + 12)
         .attr("y", y(rowSummary.factorLevel) + y.bandwidth() / 2 + 4)
-        .attr("fill", "#6f7f88")
+        .attr("fill", "#3d5a78")
         .attr("font-size", 11)
         .text(`n=${rowSummary.total}`);
     });
@@ -321,25 +332,36 @@
       .append("text")
       .attr("x", legendX)
       .attr("y", legendY - 6)
-      .attr("fill", "#6f7f88")
+      .attr("fill", "#3d5a78")
       .attr("font-size", 11)
       .text("Lower row share");
     svg
       .append("text")
       .attr("x", legendX + legendWidth)
       .attr("y", legendY - 6)
-      .attr("fill", "#6f7f88")
+      .attr("fill", "#3d5a78")
       .attr("font-size", 11)
       .attr("text-anchor", "end")
       .text("Higher row share");
 
     svg
       .append("text")
-      .attr("x", margin.left)
+      .attr("x", margin.left + innerWidth / 2)
       .attr("y", 22)
-      .attr("fill", "#6f7f88")
-      .attr("font-size", 12)
-      .text(`${factor.label} on rows, ${outcome.label} on columns`);
+      .attr("text-anchor", "middle")
+      .attr("fill", "#455764")
+      .attr("font-size", 13)
+      .attr("font-weight", 700)
+      .text(outcome.label);
+
+    svg
+      .append("text")
+      .attr("transform", `translate(16, ${margin.top + innerHeight / 2}) rotate(-90)`)
+      .attr("text-anchor", "middle")
+      .attr("fill", "#455764")
+      .attr("font-size", 13)
+      .attr("font-weight", 700)
+      .text(factor.label);
   }
 
   function renderBarList(element, items, colorLeft, colorRight) {
@@ -405,18 +427,18 @@
       .attr("transform", `translate(0,${innerHeight})`)
       .call(d3.axisBottom(x).ticks(6))
       .call((group) => {
-        group.select(".domain").attr("stroke", "rgba(19,36,49,0.18)");
-        group.selectAll("line").attr("stroke", "rgba(19,36,49,0.18)");
-        group.selectAll("text").attr("fill", "#455764").attr("font-size", 11);
+        group.select(".domain").attr("stroke", "rgba(255,255,255,0.12)");
+        group.selectAll("line").attr("stroke", "rgba(255,255,255,0.12)");
+        group.selectAll("text").attr("fill", "#7a9bbf").attr("font-size", 11);
       });
 
     root
       .append("g")
       .call(d3.axisLeft(y).ticks(6))
       .call((group) => {
-        group.select(".domain").attr("stroke", "rgba(19,36,49,0.18)");
-        group.selectAll("line").attr("stroke", "rgba(19,36,49,0.18)");
-        group.selectAll("text").attr("fill", "#455764").attr("font-size", 11);
+        group.select(".domain").attr("stroke", "rgba(255,255,255,0.12)");
+        group.selectAll("line").attr("stroke", "rgba(255,255,255,0.12)");
+        group.selectAll("text").attr("fill", "#7a9bbf").attr("font-size", 11);
       });
 
     root
@@ -428,7 +450,7 @@
       .attr("x2", (value) => x(value))
       .attr("y1", 0)
       .attr("y2", innerHeight)
-      .attr("stroke", "rgba(19,36,49,0.06)")
+      .attr("stroke", "rgba(255,255,255,0.05)")
       .attr("stroke-dasharray", "4,4");
 
     root
@@ -440,7 +462,7 @@
       .attr("x2", innerWidth)
       .attr("y1", (value) => y(value))
       .attr("y2", (value) => y(value))
-      .attr("stroke", "rgba(19,36,49,0.06)")
+      .attr("stroke", "rgba(255,255,255,0.05)")
       .attr("stroke-dasharray", "4,4");
 
     const circles = root
@@ -452,7 +474,7 @@
       .attr("r", (row) => size(row.n_students))
       .attr("fill", (row) => REGION_COLORS[row.region] || "#4c7a9f")
       .attr("fill-opacity", (row) => (row.country === selectedCountry ? 0.94 : 0.78))
-      .attr("stroke", (row) => (row.country === selectedCountry ? "#132431" : "#fffaf5"))
+      .attr("stroke", (row) => (row.country === selectedCountry ? "#00c4a0" : "#0d1520"))
       .attr("stroke-width", (row) => (row.country === selectedCountry ? 3 : row.is_primary ? 2.5 : 1.5))
       .style("cursor", "pointer")
       .on("mousemove", (event, row) => {
@@ -475,7 +497,7 @@
       .attr("class", "point-label")
       .attr("x", (row) => x(row.avg_sleep_hrs) + size(row.n_students) + 6)
       .attr("y", (row) => y(row[yKey]) + 4)
-      .attr("fill", "#132431")
+      .attr("fill", "#c8daf0")
       .attr("font-size", 11)
       .attr("font-weight", 700)
       .text((row) => row.country);
@@ -485,23 +507,25 @@
       .attr("x", width / 2)
       .attr("y", height - 14)
       .attr("text-anchor", "middle")
-      .attr("fill", "#6f7f88")
+      .attr("fill", "#7a9bbf")
       .attr("font-size", 12)
+      .attr("font-weight", 600)
       .text("Average sleep hours");
 
     svg
       .append("text")
       .attr("transform", `translate(18, ${height / 2}) rotate(-90)`)
       .attr("text-anchor", "middle")
-      .attr("fill", "#6f7f88")
+      .attr("fill", "#7a9bbf")
       .attr("font-size", 12)
+      .attr("font-weight", 600)
       .text(yLabel);
 
     svg
       .append("text")
       .attr("x", margin.left)
       .attr("y", 18)
-      .attr("fill", "#6f7f88")
+      .attr("fill", "#3d5a78")
       .attr("font-size", 12)
       .text("Bubble size scales with sample size");
   }

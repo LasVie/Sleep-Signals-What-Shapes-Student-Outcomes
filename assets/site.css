@@ -1,25 +1,25 @@
 @import url("https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Work+Sans:wght@400;500;600;700&display=swap");
 
 :root {
-  --bg: #f5efe4;
-  --bg-soft: #fbf7f0;
-  --paper: rgba(255, 250, 243, 0.8);
-  --paper-strong: rgba(255, 252, 247, 0.94);
-  --ink: #132431;
-  --ink-soft: #455764;
-  --ink-faint: #6f7f88;
-  --line: rgba(19, 36, 49, 0.12);
-  --line-strong: rgba(19, 36, 49, 0.2);
-  --navy: #12344d;
-  --teal: #2b7a78;
-  --teal-soft: #83b7b0;
-  --sand: #e7d8c1;
-  --amber: #d59a52;
-  --terracotta: #b85a3d;
-  --rust: #8d3a2a;
-  --sky: #4c7a9f;
-  --sage: #5e7f60;
-  --shadow: 0 18px 60px rgba(62, 47, 31, 0.12);
+  --bg: #0d1520;
+  --bg-soft: #111d2e;
+  --paper: rgba(18, 30, 52, 0.88);
+  --paper-strong: rgba(21, 34, 58, 0.97);
+  --ink: #d4e2f4;
+  --ink-soft: #7a9bbf;
+  --ink-faint: #3d5a78;
+  --line: rgba(255, 255, 255, 0.07);
+  --line-strong: rgba(255, 255, 255, 0.13);
+  --navy: #0d1520;
+  --teal: #00c4a0;
+  --teal-soft: #0d6e62;
+  --sand: #e8a030;
+  --amber: #f5a623;
+  --terracotta: #f87171;
+  --rust: #ef4444;
+  --sky: #60a5fa;
+  --sage: #34d399;
+  --shadow: 0 18px 60px rgba(0, 0, 0, 0.5);
   --radius-xl: 28px;
   --radius-lg: 22px;
   --radius-md: 16px;
@@ -45,9 +45,10 @@ body {
   color: var(--ink);
   font-family: var(--font-body);
   background:
-    radial-gradient(circle at top left, rgba(213, 154, 82, 0.16), transparent 30%),
-    radial-gradient(circle at 85% 15%, rgba(43, 122, 120, 0.12), transparent 26%),
-    linear-gradient(180deg, #f9f4ed 0%, var(--bg) 48%, #efe4d4 100%);
+    radial-gradient(circle at 18% 8%, rgba(0, 196, 160, 0.14), transparent 36%),
+    radial-gradient(circle at 86% 14%, rgba(96, 165, 250, 0.12), transparent 32%),
+    radial-gradient(circle at 50% 80%, rgba(0, 196, 160, 0.06), transparent 40%),
+    linear-gradient(180deg, #0d1520 0%, #0f1a2c 55%, #0d1520 100%);
   overflow-x: hidden;
 }
 
@@ -57,15 +58,21 @@ body::before {
   inset: 0;
   pointer-events: none;
   background:
-    linear-gradient(120deg, rgba(255, 255, 255, 0.28), transparent 35%),
     repeating-linear-gradient(
       90deg,
-      rgba(19, 36, 49, 0.025) 0,
-      rgba(19, 36, 49, 0.025) 1px,
+      rgba(255, 255, 255, 0.018) 0,
+      rgba(255, 255, 255, 0.018) 1px,
       transparent 1px,
-      transparent 120px
+      transparent 80px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.01) 0,
+      rgba(255, 255, 255, 0.01) 1px,
+      transparent 1px,
+      transparent 80px
     );
-  opacity: 0.5;
+  opacity: 1;
 }
 
 a {
@@ -88,9 +95,9 @@ select {
   position: sticky;
   top: 0;
   z-index: 20;
-  backdrop-filter: blur(18px);
-  background: rgba(249, 244, 237, 0.78);
-  border-bottom: 1px solid rgba(19, 36, 49, 0.08);
+  backdrop-filter: blur(20px);
+  background: rgba(10, 16, 26, 0.88);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .site-nav {
@@ -120,9 +127,9 @@ select {
   font-weight: 800;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--paper-strong);
-  background: linear-gradient(135deg, var(--navy), var(--teal));
-  box-shadow: var(--shadow);
+  color: #0d1520;
+  background: linear-gradient(135deg, #00c4a0, #60a5fa);
+  box-shadow: 0 6px 20px rgba(0, 196, 160, 0.35);
 }
 
 .brand-text small,
@@ -170,12 +177,12 @@ select {
 .nav-link:hover,
 .nav-link:focus-visible {
   color: var(--ink);
-  background: rgba(255, 255, 255, 0.65);
+  background: rgba(255, 255, 255, 0.07);
 }
 
 .nav-link.active {
-  color: var(--paper-strong);
-  background: linear-gradient(135deg, var(--navy), var(--teal));
+  color: #0d1520;
+  background: linear-gradient(135deg, var(--teal), var(--sky));
 }
 
 .page-shell {
@@ -199,24 +206,24 @@ select {
 .hero {
   position: relative;
   overflow: hidden;
-  border: 1px solid rgba(19, 36, 49, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: var(--radius-xl);
   padding: 34px;
   background:
-    linear-gradient(145deg, rgba(255, 253, 249, 0.96), rgba(245, 236, 221, 0.84)),
+    linear-gradient(145deg, rgba(0, 196, 160, 0.07), rgba(96, 165, 250, 0.05)),
     var(--paper);
-  box-shadow: var(--shadow);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.5);
 }
 
 .hero::after {
   content: "";
   position: absolute;
-  width: 320px;
-  height: 320px;
-  right: -80px;
-  top: -120px;
+  width: 380px;
+  height: 380px;
+  right: -100px;
+  top: -140px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(43, 122, 120, 0.18), transparent 65%);
+  background: radial-gradient(circle, rgba(96, 165, 250, 0.18), transparent 65%);
   pointer-events: none;
 }
 
@@ -281,15 +288,15 @@ select {
 }
 
 .btn-primary {
-  color: var(--paper-strong);
-  background: linear-gradient(135deg, var(--navy), var(--teal));
-  box-shadow: 0 12px 30px rgba(18, 52, 77, 0.18);
+  color: #0d1520;
+  background: linear-gradient(135deg, var(--teal), var(--sky));
+  box-shadow: 0 12px 30px rgba(0, 196, 160, 0.3);
 }
 
 .btn-secondary {
-  border-color: var(--line);
+  border-color: rgba(255, 255, 255, 0.12);
   color: var(--ink);
-  background: rgba(255, 255, 255, 0.72);
+  background: rgba(255, 255, 255, 0.06);
 }
 
 .hero-card,
@@ -302,7 +309,7 @@ select {
 .insight-card,
 .rank-card,
 .glossary-card {
-  border: 1px solid rgba(19, 36, 49, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.07);
   border-radius: var(--radius-lg);
   background: var(--paper-strong);
   box-shadow: var(--shadow);
@@ -337,7 +344,7 @@ select {
 
 .stat-card {
   padding: 16px;
-  background: rgba(255, 255, 255, 0.68);
+  background: rgba(255, 255, 255, 0.04);
 }
 
 .stat-label {
@@ -490,8 +497,8 @@ select {
 .sample-pill,
 .meta-pill {
   padding: 8px 12px;
-  border: 1px solid rgba(19, 36, 49, 0.12);
-  background: rgba(255, 255, 255, 0.66);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .chip {
@@ -518,14 +525,14 @@ select {
   width: 12px;
   height: 12px;
   border-radius: 999px;
-  border: 1px solid rgba(19, 36, 49, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   flex-shrink: 0;
 }
 
 .route-card {
   min-height: 220px;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(245, 238, 229, 0.88));
+    linear-gradient(145deg, rgba(0, 196, 160, 0.06), rgba(96, 165, 250, 0.04));
 }
 
 .route-card .route-link {
@@ -533,7 +540,7 @@ select {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  color: var(--navy);
+  color: var(--teal);
   font-weight: 700;
 }
 
@@ -541,7 +548,7 @@ select {
   padding: 20px;
   display: grid;
   gap: 16px;
-  border: 1px solid rgba(19, 36, 49, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.07);
   border-radius: var(--radius-lg);
   background: var(--paper-strong);
   box-shadow: var(--shadow);
@@ -570,11 +577,19 @@ select {
   width: 100%;
   min-height: 50px;
   border-radius: 16px;
-  border: 1px solid rgba(19, 36, 49, 0.12);
+  border: 1px solid rgba(0, 196, 160, 0.22);
   padding: 0 16px;
   color: var(--ink);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(247, 242, 235, 0.96));
+  background: rgba(18, 30, 52, 0.95);
+  cursor: pointer;
+  transition: border-color 160ms ease, background 160ms ease;
+  appearance: auto;
+  color-scheme: dark;
+}
+
+select:hover {
+  border-color: rgba(0, 196, 160, 0.45);
+  background: rgba(22, 36, 64, 0.98);
 }
 
 select:focus-visible,
@@ -582,13 +597,68 @@ select:focus-visible,
 .insight-button:focus-visible,
 .btn:focus-visible,
 .nav-link:focus-visible {
-  outline: 3px solid rgba(43, 122, 120, 0.28);
+  outline: 2px solid rgba(0, 196, 160, 0.6);
   outline-offset: 2px;
 }
 
 .sample-pill,
 .meta-pill {
   color: var(--ink-soft);
+}
+
+.rho-pill {
+  cursor: help;
+  text-decoration: underline dotted rgba(27, 42, 62, 0.3);
+  text-underline-offset: 2px;
+}
+
+.rho-info {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: rgba(0, 196, 160, 0.15);
+  border: 1px solid rgba(0, 196, 160, 0.4);
+  color: var(--teal);
+  font-size: 9px;
+  font-weight: 800;
+  font-family: var(--font-display);
+  cursor: help;
+  vertical-align: middle;
+  margin-left: 5px;
+  flex-shrink: 0;
+  line-height: 1;
+  user-select: none;
+  transition: background 140ms ease, border-color 140ms ease;
+}
+
+.rho-info:hover {
+  background: rgba(0, 196, 160, 0.3);
+  border-color: rgba(0, 196, 160, 0.65);
+}
+
+.rho-tip {
+  position: fixed;
+  z-index: 200;
+  max-width: 280px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: #1b2a3e;
+  color: #f0f5ff;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.5;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 130ms ease;
+  box-shadow: 0 6px 20px rgba(27, 42, 62, 0.28);
+}
+
+.rho-tip.rho-tip-visible {
+  opacity: 1;
 }
 
 .insight-grid {
@@ -599,6 +669,14 @@ select:focus-visible,
   position: relative;
   padding: 0;
   overflow: hidden;
+  transition: background 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+  background: rgba(18, 30, 52, 0.85);
+}
+
+.insight-card:hover:not(.selected),
+.rank-card:hover:not(.selected) {
+  background: rgba(0, 196, 160, 0.07);
+  border-color: rgba(0, 196, 160, 0.22);
 }
 
 .insight-button,
@@ -609,12 +687,19 @@ select:focus-visible,
   text-align: left;
   background: transparent;
   cursor: pointer;
+  transition: background 160ms ease;
+}
+
+.insight-button:hover,
+.rank-button:hover {
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .insight-card.selected,
 .rank-card.selected {
-  border-color: rgba(19, 36, 49, 0.22);
-  box-shadow: 0 24px 60px rgba(62, 47, 31, 0.16);
+  background: linear-gradient(145deg, rgba(0, 196, 160, 0.16), rgba(96, 165, 250, 0.08));
+  border-color: rgba(0, 196, 160, 0.38);
+  box-shadow: 0 0 0 1px rgba(0, 196, 160, 0.18), 0 20px 50px rgba(0, 0, 0, 0.5);
 }
 
 .insight-card::before,
@@ -624,7 +709,7 @@ select:focus-visible,
   inset: 0 auto auto 0;
   width: 100%;
   height: 5px;
-  background: linear-gradient(90deg, var(--teal), var(--amber));
+  background: linear-gradient(90deg, var(--teal), var(--sky));
   opacity: 0;
 }
 
@@ -670,7 +755,7 @@ select:focus-visible,
   inset: 0 auto 0 0;
   width: 0;
   border-radius: 999px;
-  background: linear-gradient(90deg, var(--teal), var(--amber));
+  background: linear-gradient(90deg, var(--teal), var(--sky));
 }
 
 .viz-layout {
@@ -695,8 +780,8 @@ select:focus-visible,
   margin-top: 18px;
   min-height: 400px;
   border-radius: var(--radius-md);
-  border: 1px solid rgba(19, 36, 49, 0.08);
-  background: linear-gradient(180deg, rgba(251, 248, 243, 0.98), rgba(244, 236, 224, 0.92));
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(10, 16, 28, 0.7);
   overflow: hidden;
 }
 
@@ -722,6 +807,8 @@ select:focus-visible,
   position: relative;
   padding: 0;
   overflow: hidden;
+  transition: background 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+  background: rgba(18, 30, 52, 0.85);
 }
 
 .rank-card .rank-button {
@@ -796,7 +883,7 @@ select:focus-visible,
   inset: 0 auto 0 0;
   width: 0;
   border-radius: 999px;
-  background: linear-gradient(90deg, var(--sky), var(--teal));
+  background: linear-gradient(90deg, var(--teal), var(--sky));
 }
 
 .glossary-grid {
@@ -826,13 +913,13 @@ select:focus-visible,
 .error-state {
   padding: 22px;
   border-radius: var(--radius-lg);
-  border: 1px dashed rgba(19, 36, 49, 0.18);
+  border: 1px dashed rgba(255, 255, 255, 0.1);
   color: var(--ink-soft);
-  background: rgba(255, 255, 255, 0.62);
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .error-state {
-  color: var(--rust);
+  color: var(--terracotta);
 }
 
 .tooltip {
@@ -841,9 +928,9 @@ select:focus-visible,
   max-width: 300px;
   padding: 12px 14px;
   border-radius: 16px;
-  border: 1px solid rgba(19, 36, 49, 0.1);
-  background: rgba(255, 252, 247, 0.97);
-  box-shadow: 0 18px 50px rgba(62, 47, 31, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(14, 24, 42, 0.97);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5);
   color: var(--ink);
   pointer-events: none;
   opacity: 0;

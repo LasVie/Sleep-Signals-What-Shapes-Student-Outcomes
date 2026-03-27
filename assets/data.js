@@ -462,7 +462,7 @@
       {
         title: "Exercise is the strongest protective primary factor",
         chip: "Context for action",
-        metric: `ρ = ${exerciseRanking.rho.toFixed(2)}`,
+        metric: `ρ = ${exerciseRanking.rho.toFixed(2)}<span class="rho-info" data-tip="Rank correlation (−1 to +1). Positive = worse factor aligns with worse outcome.">?</span>`,
         body:
           "The negative direction means more exercise lines up with less assignment impact in this dataset.",
       },
@@ -505,4 +505,29 @@
     percentageString,
     associationStrength,
   };
+})();
+
+// Global rho-info tooltip (event delegation — works with dynamically rendered content)
+(function () {
+  const tip = document.createElement("div");
+  tip.className = "rho-tip";
+  document.body.appendChild(tip);
+
+  document.addEventListener("mousemove", (event) => {
+    const el = event.target.closest(".rho-info");
+    if (!el) {
+      tip.classList.remove("rho-tip-visible");
+      return;
+    }
+    tip.textContent = el.dataset.tip;
+    tip.classList.add("rho-tip-visible");
+    const pad = 14;
+    const box = tip.getBoundingClientRect();
+    let left = event.clientX + pad;
+    let top = event.clientY - box.height - pad;
+    if (left + box.width + 8 > window.innerWidth) left = event.clientX - box.width - pad;
+    if (top < 8) top = event.clientY + pad;
+    tip.style.left = left + "px";
+    tip.style.top = top + "px";
+  });
 })();

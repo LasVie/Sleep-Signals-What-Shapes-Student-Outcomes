@@ -80,7 +80,7 @@ document.addEventListener("DOMContentLoaded", async () => {
               <h3 class="rank-title">${item.factor.label}</h3>
               <p>${item.factor.summary}</p>
               <div class="pill-row">
-                <span class="meta-pill">ρ = ${item.rho.toFixed(3)}</span>
+                <span class="meta-pill">ρ = ${item.rho.toFixed(3)}<span class="rho-info" data-tip="Rank correlation (−1 to +1). Positive = worse factor aligns with worse outcome.">?</span></span>
                 <span class="meta-pill">N = ${item.n.toLocaleString()}</span>
               </div>
             </button>
@@ -109,7 +109,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     chartTitleElement.textContent = `${selected.factor.label} × ${outcome.label}`;
     chartCopyElement.textContent = `${selected.factor.question} The heatmap uses row-normalized percentages so each factor level keeps its own outcome distribution visible.`;
-    rhoElement.textContent = `Selected factor: ${selected.factor.label} (ρ = ${selected.rho.toFixed(3)})`;
+    rhoElement.innerHTML = `Selected factor: ${selected.factor.label} (\u03c1 = ${selected.rho.toFixed(3)}<span class="rho-info" data-tip="Rank correlation (−1 to +1). Positive = worse factor aligns with worse outcome.">?</span>)`;
 
     patternElement.innerHTML = `
       <span class="section-kicker">Pattern summary</span>

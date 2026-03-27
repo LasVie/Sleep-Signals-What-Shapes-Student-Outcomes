@@ -83,7 +83,7 @@ document.addEventListener("DOMContentLoaded", async () => {
               <p>${factor.summary}</p>
               <div class="pill-row">
                 <span class="meta-pill">${associationStrength(item.abs)} association</span>
-                <span class="meta-pill">ρ = ${item.rho.toFixed(3)}</span>
+                <span class="meta-pill">ρ = ${item.rho.toFixed(3)}<span class="rho-info" data-tip="Rank correlation (−1 to +1). Positive = worse factor aligns with worse outcome.">?</span></span>
               </div>
               <div class="impact-meter">
                 <div class="impact-bar"><span class="impact-fill" style="width:${width}%"></span></div>
@@ -123,7 +123,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       <p>${selected.factor.summary}</p>
       <div class="pill-row">
         <span class="scope-chip ${selected.factor.scope}">${selected.factor.scope}</span>
-        <span class="meta-pill">ρ = ${selected.rho.toFixed(3)}</span>
+        <span class="meta-pill">ρ = ${selected.rho.toFixed(3)}<span class="rho-info" data-tip="Rank correlation (−1 to +1). Positive = worse factor aligns with worse outcome.">?</span></span>
         <span class="meta-pill">N = ${selected.n.toLocaleString()}</span>
       </div>
       <p class="small-copy">
