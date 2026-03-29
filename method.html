@@ -4,6 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Sleep Signals | Data &amp; Method</title>
+  <script>
+    try {
+      const savedTheme = localStorage.getItem("sleep-signals-theme");
+      if (savedTheme === "light" || savedTheme === "dark") document.documentElement.dataset.theme = savedTheme;
+    } catch (error) {}
+  </script>
   <link rel="stylesheet" href="assets/site.css">
 </head>
 <body>
@@ -151,6 +157,7 @@
   <script src="data/global-sleep-benchmarks.js" defer></script>
   <script src="assets/data.js" defer></script>
   <script src="assets/charts.js" defer></script>
+  <script src="assets/theme.js" defer></script>
   <script src="assets/method.js" defer></script>
 </body>
 </html>

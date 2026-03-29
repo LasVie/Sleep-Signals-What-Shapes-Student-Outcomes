@@ -4,6 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Sleep Signals | Educator View</title>
+  <script>
+    try {
+      const savedTheme = localStorage.getItem("sleep-signals-theme");
+      if (savedTheme === "light" || savedTheme === "dark") document.documentElement.dataset.theme = savedTheme;
+    } catch (error) {}
+  </script>
   <link rel="stylesheet" href="assets/site.css">
 </head>
 <body>
@@ -98,9 +104,10 @@
             <p id="educatorChartCopy">
               Darker cells mark a larger share within the selected factor level.
             </p>
+            <div class="chart-toolbar" id="educatorViewModes" aria-label="Educator chart view modes"></div>
             <div class="legend" id="educatorLegend"></div>
             <div class="chart-shell" id="educatorChart"></div>
-            <p class="footnote">
+            <p class="footnote" id="educatorFootnote">
               Each row is normalized independently, so the point is to compare pattern shape across factor levels. Use the row totals on the right to keep sample size in view.
             </p>
           </article>
@@ -145,6 +152,7 @@
   <script src="data/local-survey-bundle.js" defer></script>
   <script src="assets/data.js" defer></script>
   <script src="assets/charts.js" defer></script>
+  <script src="assets/theme.js" defer></script>
   <script src="assets/educator.js" defer></script>
 </body>
 </html>

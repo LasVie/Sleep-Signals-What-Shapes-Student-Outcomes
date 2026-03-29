@@ -4,6 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Sleep Signals | Student View</title>
+  <script>
+    try {
+      const savedTheme = localStorage.getItem("sleep-signals-theme");
+      if (savedTheme === "light" || savedTheme === "dark") document.documentElement.dataset.theme = savedTheme;
+    } catch (error) {}
+  </script>
   <link rel="stylesheet" href="assets/site.css">
 </head>
 <body>
@@ -104,14 +110,15 @@
           <div class="loading-state">Loading explanation…</div>
         </aside>
         <article class="chart-card">
-          <span class="section-kicker">Combined distribution</span>
+          <span class="section-kicker">Outcome comparison</span>
           <h3 id="studentChartTitle">Factor vs outcome split</h3>
           <p id="studentChartCopy">
             Each row shows the outcome mix within one factor level.
           </p>
+          <div class="chart-toolbar" id="studentViewModes" aria-label="Student chart view modes"></div>
           <div class="legend" id="studentLegend"></div>
           <div class="chart-shell" id="studentChart"></div>
-          <p class="footnote">
+          <p class="footnote" id="studentFootnote">
             Cooler tones indicate better outcomes, warmer tones indicate worse outcomes. Read each row from left to right, not as a causal timeline.
           </p>
         </article>
@@ -127,6 +134,7 @@
   <script src="data/local-survey-bundle.js" defer></script>
   <script src="assets/data.js" defer></script>
   <script src="assets/charts.js" defer></script>
+  <script src="assets/theme.js" defer></script>
   <script src="assets/student.js" defer></script>
 </body>
 </html>

@@ -14,7 +14,42 @@ document.addEventListener("DOMContentLoaded", async () => {
     summarizeShift,
     percentageString,
   } = window.SleepSignalsData;
-  const { renderLegend, renderHeatmap } = window.SleepSignalsCharts;
+  const {
+    renderLegend,
+    renderHeatmap,
+    renderWorseShareChart,
+    renderOutcomePathChart,
+  } = window.SleepSignalsCharts;
+
+  const VIEW_MODES = [
+    {
+      key: "heatmap",
+      label: "Heatmap",
+      title: (factor, outcome) => `${factor.label} × ${outcome.label}`,
+      copy: (factor, outcome) =>
+        `${factor.question} The heatmap uses row-normalized percentages so each factor level keeps its own outcome distribution visible.`,
+      footnote:
+        "Each row is normalized independently, so the point is to compare pattern shape across factor levels. Use the row totals on the right to keep sample size in view.",
+    },
+    {
+      key: "risk",
+      label: "Risk bars",
+      title: (factor, outcome) => `${factor.label}: worse ${outcome.label.toLowerCase()} share`,
+      copy: (factor, outcome) =>
+        `${factor.question} This view compresses the two worst outcome levels into one bar, making the strongest risk gradient easier to compare across factor levels.`,
+      footnote:
+        "Each bar combines the two worst outcome levels for one factor level. The dashed line marks the visible average inside the filtered sample.",
+    },
+    {
+      key: "paths",
+      label: "Outcome paths",
+      title: (factor, outcome) => `${factor.label}: outcome paths`,
+      copy: (factor, outcome) =>
+        `${factor.question} Each line tracks one outcome level across the factor order, which helps reveal whether the shift is steady or concentrated at one end.`,
+      footnote:
+        "All lines are row-normalized shares. Parallel lines imply stability, while widening gaps show where the distribution starts to polarize.",
+    },
+  ];
 
   const outcomeSelect = document.getElementById("educatorOutcome");
   const yearSelect = document.getElementById("educatorYear");
@@ -24,8 +59,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   const rankingElement = document.getElementById("rankingList");
   const chartTitleElement = document.getElementById("educatorChartTitle");
   const chartCopyElement = document.getElementById("educatorChartCopy");
+  const viewModesElement = document.getElementById("educatorViewModes");
   const chartElement = document.getElementById("educatorChart");
   const legendElement = document.getElementById("educatorLegend");
+  const footnoteElement = document.getElementById("educatorFootnote");
   const patternElement = document.getElementById("educatorPattern");
 
   const state = {
@@ -34,6 +71,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     year: "All",
     gender: "All",
     factorKey: null,
+    viewMode: "heatmap",
   };
 
   OUTCOMES.forEach((outcome) => {
@@ -44,6 +82,57 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
   outcomeSelect.value = state.outcomeKey;
 
+  function renderViewModes() {
+    viewModesElement.innerHTML = VIEW_MODES.map((mode) => {
+      const activeClass = mode.key === state.viewMode ? " active" : "";
+      return `<button class="view-toggle${activeClass}" type="button" data-view-mode="${mode.key}">${mode.label}</button>`;
+    }).join("");
+
+    viewModesElement.querySelectorAll("[data-view-mode]").forEach((button) => {
+      button.addEventListener("click", () => {
+        state.viewMode = button.dataset.viewMode;
+        renderEducator();
+      });
+    });
+  }
+
+  function renderLegendForMode(outcome) {
+    if (state.viewMode === "risk") {
+      legendElement.innerHTML = `
+        <span class="legend-item">Focus: ${window.SleepSignalsCharts.escapeHtml(outcome.order.slice(-2).join(" + "))}</span>
+        <span class="legend-item">Dashed line = visible average</span>
+      `;
+      return;
+    }
+    renderLegend(legendElement, outcome.order);
+  }
+
+  function renderChartForMode(matrix, factor, outcome) {
+    if (state.viewMode === "risk") {
+      renderWorseShareChart(chartElement, {
+        matrix,
+        factor,
+        outcome,
+      });
+      return;
+    }
+
+    if (state.viewMode === "paths") {
+      renderOutcomePathChart(chartElement, {
+        matrix,
+        factor,
+        outcome,
+      });
+      return;
+    }
+
+    renderHeatmap(chartElement, {
+      matrix,
+      factor,
+      outcome,
+    });
+  }
+
   function renderEducator() {
     const filtered = filterRows(state.rows, {
       year: state.year,
@@ -53,12 +142,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     const outcome = getOutcome(state.outcomeKey);
 
     sampleElement.textContent = `Filtered sample: ${filtered.length.toLocaleString()} responses`;
+    renderViewModes();
 
     if (!ranking.length) {
       const message = `<div class="error-state">Not enough data for this selection.</div>`;
       rankingElement.innerHTML = message;
       chartElement.innerHTML = message;
       patternElement.innerHTML = message;
+      legendElement.innerHTML = "";
       rhoElement.textContent = "Selected factor: unavailable";
       return;
     }
@@ -99,16 +190,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     const selected = ranking.find((item) => item.factor.key === state.factorKey) || ranking[0];
     const matrix = computeMatrix(filtered, state.factorKey, state.outcomeKey);
     const shift = summarizeShift(filtered, state.factorKey, state.outcomeKey);
+    const viewMode = VIEW_MODES.find((mode) => mode.key === state.viewMode) || VIEW_MODES[0];
 
-    renderLegend(legendElement, outcome.order);
-    renderHeatmap(chartElement, {
-      matrix,
-      factor: selected.factor,
-      outcome,
-    });
+    renderLegendForMode(outcome);
+    renderChartForMode(matrix, selected.factor, outcome);
 
-    chartTitleElement.textContent = `${selected.factor.label} × ${outcome.label}`;
-    chartCopyElement.textContent = `${selected.factor.question} The heatmap uses row-normalized percentages so each factor level keeps its own outcome distribution visible.`;
+    chartTitleElement.textContent = viewMode.title(selected.factor, outcome);
+    chartCopyElement.textContent = viewMode.copy(selected.factor, outcome);
+    footnoteElement.textContent = viewMode.footnote;
     rhoElement.innerHTML = `Selected factor: ${selected.factor.label} (\u03c1 = ${selected.rho.toFixed(3)}<span class="rho-info" data-tip="Rank correlation (−1 to +1). Positive = worse factor aligns with worse outcome.">?</span>)`;
 
     patternElement.innerHTML = `
@@ -146,6 +235,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   window.addEventListener("resize", () => {
+    if (state.rows.length) renderEducator();
+  });
+
+  window.addEventListener("sleepSignals:themechange", () => {
     if (state.rows.length) renderEducator();
   });
 

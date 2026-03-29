@@ -4,6 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Sleep Signals | Global Context</title>
+  <script>
+    try {
+      const savedTheme = localStorage.getItem("sleep-signals-theme");
+      if (savedTheme === "light" || savedTheme === "dark") document.documentElement.dataset.theme = savedTheme;
+    } catch (error) {}
+  </script>
   <link rel="stylesheet" href="assets/site.css">
 </head>
 <body>
@@ -78,14 +84,15 @@
           <div class="loading-state">Loading selected country…</div>
         </aside>
         <article class="chart-card">
-          <span class="section-kicker">Cross-country scatter</span>
+          <span class="section-kicker">Cross-country comparison</span>
           <h3 id="contextChartTitle">Average sleep hours vs insomnia prevalence</h3>
           <p id="contextChartCopy">
             Countries with less average sleep and higher reported burden move toward the upper-left of the plot.
           </p>
+          <div class="chart-toolbar" id="contextViewModes" aria-label="Context chart view modes"></div>
           <div class="legend" id="contextLegend"></div>
           <div class="chart-shell" id="contextChart"></div>
-          <p class="footnote">
+          <p class="footnote" id="contextFootnote">
             These benchmark values come from different studies and should be treated as comparative context rather than a strictly harmonized pooled dataset.
           </p>
         </article>
@@ -114,6 +121,7 @@
   <script src="data/global-sleep-benchmarks.js" defer></script>
   <script src="assets/data.js" defer></script>
   <script src="assets/charts.js" defer></script>
+  <script src="assets/theme.js" defer></script>
   <script src="assets/context.js" defer></script>
 </body>
 </html>

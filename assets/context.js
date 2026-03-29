@@ -1,11 +1,51 @@
 document.addEventListener("DOMContentLoaded", async () => {
   const { loadBenchmarkData } = window.SleepSignalsData;
-  const { REGION_COLORS, renderBenchmarkScatter, escapeHtml } = window.SleepSignalsCharts;
+  const {
+    REGION_COLORS,
+    renderBenchmarkScatter,
+    renderBenchmarkBars,
+    renderBenchmarkQuadrants,
+    escapeHtml,
+  } = window.SleepSignalsCharts;
 
   const METRICS = [
     { key: "insomnia_pct", label: "Insomnia prevalence (%)", summary: "Average sleep hours vs insomnia prevalence" },
-    { key: "pct_sleep_affects_academics", label: "Students saying sleep affects academics (%)", summary: "Average sleep hours vs reported academic impact" },
+    {
+      key: "pct_sleep_affects_academics",
+      label: "Students saying sleep affects academics (%)",
+      summary: "Average sleep hours vs reported academic impact",
+    },
     { key: "academic_pressure_score", label: "Academic pressure score (1-5)", summary: "Average sleep hours vs academic pressure score" },
+  ];
+
+  const VIEW_MODES = [
+    {
+      key: "scatter",
+      label: "Scatter",
+      title: (metric) => metric.summary,
+      copy: (selected, metric) =>
+        `The selected country is ${selected.country}. Compare how its average sleep hours and ${metric.label.toLowerCase()} sit against the other visible benchmark records.`,
+      footnote:
+        "These benchmark values come from different studies and should be treated as comparative context rather than a strictly harmonized pooled dataset.",
+    },
+    {
+      key: "ranked",
+      label: "Ranked bars",
+      title: (metric) => `${metric.label} across visible countries`,
+      copy: (selected, metric) =>
+        `${selected.country} stays highlighted, while the bars rank every visible country on ${metric.label.toLowerCase()} and show sleep hours on the right.`,
+      footnote:
+        "Countries are ranked only inside the current filter. Sleep hours stay visible as a side label rather than a second axis.",
+    },
+    {
+      key: "quadrants",
+      label: "Pattern map",
+      title: (metric) => `Pattern map for ${metric.label.toLowerCase()}`,
+      copy: (selected, metric) =>
+        `${selected.country} is grouped by whether it sits above or below the visible average for sleep hours and ${metric.label.toLowerCase()}.`,
+      footnote:
+        "Quadrant positions shift with the current region and metric filter because the split is based on the visible averages, not a fixed global threshold.",
+    },
   ];
 
   const statsElement = document.getElementById("contextStats");
@@ -13,8 +53,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   const metricSelect = document.getElementById("contextMetric");
   const chartTitleElement = document.getElementById("contextChartTitle");
   const chartCopyElement = document.getElementById("contextChartCopy");
+  const viewModesElement = document.getElementById("contextViewModes");
   const legendElement = document.getElementById("contextLegend");
   const chartElement = document.getElementById("contextChart");
+  const footnoteElement = document.getElementById("contextFootnote");
   const detailElement = document.getElementById("contextDetail");
   const rankingTitleElement = document.getElementById("contextRankingTitle");
   const rankingElement = document.getElementById("contextRanking");
@@ -25,14 +67,39 @@ document.addEventListener("DOMContentLoaded", async () => {
     region: "All",
     metricKey: "insomnia_pct",
     selectedCountry: "Bangladesh",
+    viewMode: "scatter",
   };
 
-  function buildLegend() {
+  function buildRegionLegend() {
     legendElement.innerHTML = Object.entries(REGION_COLORS)
       .map(([region, color]) => {
         return `<span class="legend-item"><span class="legend-swatch" style="background:${color}"></span>${escapeHtml(region)}</span>`;
       })
       .join("");
+  }
+
+  function renderLegendForMode() {
+    if (state.viewMode === "quadrants") {
+      legendElement.innerHTML = `
+        <span class="legend-item">Quadrants split countries by the visible averages for sleep and the selected burden metric.</span>
+      `;
+      return;
+    }
+    buildRegionLegend();
+  }
+
+  function renderViewModes() {
+    viewModesElement.innerHTML = VIEW_MODES.map((mode) => {
+      const activeClass = mode.key === state.viewMode ? " active" : "";
+      return `<button class="view-toggle${activeClass}" type="button" data-view-mode="${mode.key}">${mode.label}</button>`;
+    }).join("");
+
+    viewModesElement.querySelectorAll("[data-view-mode]").forEach((button) => {
+      button.addEventListener("click", () => {
+        state.viewMode = button.dataset.viewMode;
+        renderContext();
+      });
+    });
   }
 
   function renderRanking(rows, metric) {
@@ -69,14 +136,42 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
+  function renderChart(rows, metric) {
+    const commonOptions = {
+      rows,
+      yKey: metric.key,
+      yLabel: metric.label,
+      selectedCountry: state.selectedCountry,
+      onSelect: (country) => {
+        state.selectedCountry = country;
+        renderContext();
+      },
+    };
+
+    if (state.viewMode === "ranked") {
+      renderBenchmarkBars(chartElement, commonOptions);
+      return;
+    }
+
+    if (state.viewMode === "quadrants") {
+      renderBenchmarkQuadrants(chartElement, commonOptions);
+      return;
+    }
+
+    renderBenchmarkScatter(chartElement, commonOptions);
+  }
+
   function renderContext() {
     const metric = METRICS.find((item) => item.key === state.metricKey);
     const rows = state.region === "All" ? state.rows : state.rows.filter((row) => row.region === state.region);
+    renderViewModes();
+
     if (!rows.length) {
       chartElement.innerHTML = `<div class="error-state">No benchmark records available for this region.</div>`;
       detailElement.innerHTML = `<div class="error-state">No selected country available.</div>`;
       rankingElement.innerHTML = `<div class="error-state">No ranking available.</div>`;
       insightElement.innerHTML = `<div class="error-state">No benchmark insight available.</div>`;
+      legendElement.innerHTML = "";
       return;
     }
 
@@ -92,20 +187,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     const direction = delta >= 0 ? "above" : "below";
     const localDelta = selected[state.metricKey] - localReference[state.metricKey];
     const localDirection = localDelta >= 0 ? "higher" : "lower";
+    const viewMode = VIEW_MODES.find((mode) => mode.key === state.viewMode) || VIEW_MODES[0];
 
-    chartTitleElement.textContent = metric.summary;
-    chartCopyElement.textContent = `The selected country is ${selected.country}. Compare how its average sleep hours and ${metric.label.toLowerCase()} sit against the other visible benchmark records.`;
-
-    renderBenchmarkScatter(chartElement, {
-      rows,
-      yKey: metric.key,
-      yLabel: metric.label,
-      selectedCountry: state.selectedCountry,
-      onSelect: (country) => {
-        state.selectedCountry = country;
-        renderContext();
-      },
-    });
+    chartTitleElement.textContent = viewMode.title(metric);
+    chartCopyElement.textContent = viewMode.copy(selected, metric);
+    footnoteElement.textContent = viewMode.footnote;
+    renderLegendForMode();
+    renderChart(rows, metric);
 
     detailElement.innerHTML = `
       <span class="section-kicker">Selected country</span>
@@ -164,6 +252,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (state.rows.length) renderContext();
   });
 
+  window.addEventListener("sleepSignals:themechange", () => {
+    if (state.rows.length) renderContext();
+  });
+
   try {
     state.rows = await loadBenchmarkData();
     const regions = ["All", ...new Set(state.rows.map((row) => row.region)).values()].sort((left, right) => {
@@ -217,7 +309,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       </div>
     `;
 
-    buildLegend();
     renderContext();
   } catch (error) {
     const message = `<div class="error-state">${escapeHtml(error.message)}</div>`;

@@ -15,7 +15,42 @@ document.addEventListener("DOMContentLoaded", async () => {
     percentageString,
     associationStrength,
   } = window.SleepSignalsData;
-  const { renderLegend, renderStackedOutcomeChart } = window.SleepSignalsCharts;
+  const {
+    renderLegend,
+    renderStackedOutcomeChart,
+    renderWorseShareChart,
+    renderOutcomePathChart,
+  } = window.SleepSignalsCharts;
+
+  const VIEW_MODES = [
+    {
+      key: "stacked",
+      label: "Stacked split",
+      title: (factor, outcome) => `${factor.label} vs ${outcome.label}`,
+      copy: (factor, outcome) =>
+        `${factor.question} The rows below show how the ${outcome.label.toLowerCase()} split changes across the ordered response levels.`,
+      footnote:
+        "Cooler tones indicate better outcomes, warmer tones indicate worse outcomes. Read each row from left to right, not as a causal timeline.",
+    },
+    {
+      key: "risk",
+      label: "Risk bars",
+      title: (factor, outcome) => `${factor.label}: worse ${outcome.label.toLowerCase()} share`,
+      copy: (factor, outcome) =>
+        `${factor.question} This view collapses the two worst ${outcome.label.toLowerCase()} levels into one bar so the risk gradient is easier to compare.`,
+      footnote:
+        "Each bar combines the two worst outcome levels. Use the dashed reference line to see which factor levels sit above the visible average risk.",
+    },
+    {
+      key: "paths",
+      label: "Outcome paths",
+      title: (factor, outcome) => `${factor.label}: outcome paths`,
+      copy: (factor, outcome) =>
+        `${factor.question} Each line traces one outcome level across the ordered factor scale, making expansion and contraction easier to spot.`,
+      footnote:
+        "Read the lines left to right across the ordered factor levels. The steepest slopes show where the outcome mix changes fastest.",
+    },
+  ];
 
   const outcomeSelect = document.getElementById("studentOutcome");
   const yearSelect = document.getElementById("studentYear");
@@ -25,8 +60,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   const cardsElement = document.getElementById("studentCards");
   const chartTitleElement = document.getElementById("studentChartTitle");
   const chartCopyElement = document.getElementById("studentChartCopy");
+  const viewModesElement = document.getElementById("studentViewModes");
   const chartElement = document.getElementById("studentChart");
   const legendElement = document.getElementById("studentLegend");
+  const footnoteElement = document.getElementById("studentFootnote");
   const summaryElement = document.getElementById("studentSummary");
 
   const state = {
@@ -35,6 +72,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     year: "All",
     gender: "All",
     factorKey: null,
+    viewMode: "stacked",
   };
 
   OUTCOMES.forEach((outcome) => {
@@ -44,6 +82,57 @@ document.addEventListener("DOMContentLoaded", async () => {
     outcomeSelect.appendChild(option);
   });
   outcomeSelect.value = state.outcomeKey;
+
+  function renderViewModes() {
+    viewModesElement.innerHTML = VIEW_MODES.map((mode) => {
+      const activeClass = mode.key === state.viewMode ? " active" : "";
+      return `<button class="view-toggle${activeClass}" type="button" data-view-mode="${mode.key}">${mode.label}</button>`;
+    }).join("");
+
+    viewModesElement.querySelectorAll("[data-view-mode]").forEach((button) => {
+      button.addEventListener("click", () => {
+        state.viewMode = button.dataset.viewMode;
+        renderStudent();
+      });
+    });
+  }
+
+  function renderLegendForMode(outcome) {
+    if (state.viewMode === "risk") {
+      legendElement.innerHTML = `
+        <span class="legend-item">Focus: ${window.SleepSignalsCharts.escapeHtml(outcome.order.slice(-2).join(" + "))}</span>
+        <span class="legend-item">Dashed line = visible average</span>
+      `;
+      return;
+    }
+    renderLegend(legendElement, outcome.order);
+  }
+
+  function renderChartForMode(matrix, factor, outcome) {
+    if (state.viewMode === "risk") {
+      renderWorseShareChart(chartElement, {
+        matrix,
+        factor,
+        outcome,
+      });
+      return;
+    }
+
+    if (state.viewMode === "paths") {
+      renderOutcomePathChart(chartElement, {
+        matrix,
+        factor,
+        outcome,
+      });
+      return;
+    }
+
+    renderStackedOutcomeChart(chartElement, {
+      matrix,
+      factor,
+      outcome,
+    });
+  }
 
   function renderStudent() {
     const filtered = filterRows(state.rows, {
@@ -55,11 +144,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     sampleElement.textContent = `Filtered sample: ${filtered.length.toLocaleString()} responses`;
     outcomeDefElement.textContent = `Outcome: ${outcome.definition}`;
+    renderViewModes();
 
     if (!ranking.length) {
       cardsElement.innerHTML = `<div class="error-state">Not enough data for this selection.</div>`;
       chartElement.innerHTML = `<div class="error-state">Not enough data for this selection.</div>`;
       summaryElement.innerHTML = `<div class="error-state">Try a broader filter.</div>`;
+      legendElement.innerHTML = "";
       return;
     }
 
@@ -104,15 +195,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     const selected = ranking.find((item) => item.factorKey === state.factorKey) || ranking[0];
     const matrix = computeMatrix(filtered, state.factorKey, state.outcomeKey);
     const shift = summarizeShift(filtered, state.factorKey, state.outcomeKey);
-    renderLegend(legendElement, outcome.order);
-    renderStackedOutcomeChart(chartElement, {
-      matrix,
-      factor: selected.factor,
-      outcome,
-    });
+    const viewMode = VIEW_MODES.find((mode) => mode.key === state.viewMode) || VIEW_MODES[0];
 
-    chartTitleElement.textContent = `${selected.factor.label} vs ${outcome.label}`;
-    chartCopyElement.textContent = `${selected.factor.question} The rows below show how the ${outcome.label.toLowerCase()} split changes across the ordered response levels.`;
+    renderLegendForMode(outcome);
+    renderChartForMode(matrix, selected.factor, outcome);
+
+    chartTitleElement.textContent = viewMode.title(selected.factor, outcome);
+    chartCopyElement.textContent = viewMode.copy(selected.factor, outcome);
+    footnoteElement.textContent = viewMode.footnote;
 
     const strongest = shift.strongest;
     const weakest = shift.weakest;
@@ -157,6 +247,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   window.addEventListener("resize", () => {
+    if (state.rows.length) renderStudent();
+  });
+
+  window.addEventListener("sleepSignals:themechange", () => {
     if (state.rows.length) renderStudent();
   });
 
