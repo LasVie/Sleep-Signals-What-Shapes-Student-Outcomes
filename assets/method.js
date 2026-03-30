@@ -32,9 +32,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       <h2>What this sample can support, and what it cannot.</h2>
       <p>
         The core survey is useful for comparing ordinal patterns across habits, sleep signals, and outcomes.
-        The live site now pairs that survey with a benchmark layer for broader geographic context.
+        It is paired with country-level benchmark records for broader geographic context.
       </p>
-      <div class="stat-grid">
+      <div class="stat-grid" style="grid-template-columns: repeat(auto-fill, minmax(180px, 1fr))">
         ${stats
           .map((item) => {
             return `
@@ -49,12 +49,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         <article class="stat-card">
           <div class="stat-label">Benchmark coverage</div>
           <div class="stat-value">${benchmarkRows.length}</div>
-          <div class="stat-copy">${regionCount} regions now provide cross-country context for the main survey story.</div>
+          <div class="stat-copy">${regionCount} regions represented across the benchmark records.</div>
         </article>
       </div>
       <p class="hero-note">
-        Year-of-study and gender distributions are both skewed. Those imbalances are part of the reason the site keeps its tone descriptive rather than predictive.
-        The benchmark layer widens scope, but its records still come from different studies and should be read comparatively.
+        Year-of-study and gender distributions are both skewed. Keep these imbalances in mind when reading the charts.
+        Benchmark records come from different studies and should be read as comparative context, not a pooled dataset.
       </p>
     `;
 
@@ -72,7 +72,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       dataSourceElement.innerHTML = `
         <span class="section-kicker">Source overview</span>
-        <h3 class="panel-title">Two evidence layers, two different jobs</h3>
+        <h3 class="panel-title">Survey and benchmark records</h3>
         <div class="bar-list">
           <div class="bar-row">
             <div class="bar-topline">

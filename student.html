@@ -33,40 +33,15 @@
   </header>
 
   <main class="page-shell">
-    <section class="hero fade-up">
-      <div class="hero-grid">
-        <div class="hero-copy">
-          <span class="eyebrow">Student view</span>
-          <h1>Start with the clearest signals, not the whole dashboard.</h1>
-          <p>
-            Choose the outcome you care about, then compare the four primary factors this redesign wants to foreground.
-            The chart below shows how the outcome split changes inside each factor level, with lightweight year and gender filtering to keep the story interactive without turning back into a dashboard.
-          </p>
-        </div>
-        <aside class="hero-card">
-          <span class="section-kicker">How to read this page</span>
-          <h2>Every bar sums to 100% within one factor level.</h2>
-          <p>
-            That means you do not need to decode statistics first. You only need to compare how the worse outcome colors expand or shrink as the factor changes.
-          </p>
-          <div class="pill-row">
-            <span class="sample-pill" id="studentSample">Filtered sample: —</span>
-            <span class="meta-pill" id="studentOutcomeDef">Outcome definition: —</span>
-          </div>
-        </aside>
-      </div>
-    </section>
 
+    <!-- 1. FILTERS — first thing visible on load -->
     <section class="section fade-up">
       <div class="controls-panel">
         <div class="section-head">
           <div>
-            <span class="section-kicker">Guided controls</span>
-            <h2>Keep the filter set small.</h2>
+            <span class="section-kicker">Student view</span>
+            <h2>Filter the data.</h2>
           </div>
-          <p>
-            The student view only keeps the switches that still help interpretation. It defaults to academic performance.
-          </p>
         </div>
         <div class="controls-grid">
           <div class="field">
@@ -82,28 +57,27 @@
             <select id="studentGender"></select>
           </div>
           <div class="field">
-            <label>Why these factors</label>
-            <div class="sample-pill">The four primary factors from the BRD only</div>
+            <label>Sample</label>
+            <div class="sample-pill" id="studentSample">Filtered sample: —</div>
           </div>
         </div>
       </div>
     </section>
 
+    <!-- 2. FACTOR CARDS -->
     <section class="section fade-up">
       <div class="section-head">
         <div>
           <span class="section-kicker">Ranked shortlist</span>
           <h2>Top habits and signals to watch</h2>
         </div>
-        <p>
-          These cards are ranked for the current outcome selection. Click any card to update the chart and explanation below.
-        </p>
       </div>
       <div class="insight-grid" id="studentCards">
         <div class="loading-state">Loading ranked factors…</div>
       </div>
     </section>
 
+    <!-- 3. CHART -->
     <section class="section fade-up">
       <div class="viz-layout">
         <aside class="note-card" id="studentSummary">
@@ -124,6 +98,30 @@
         </article>
       </div>
     </section>
+
+    <!-- 4. INTRO — moved below chart as a reference note -->
+    <section class="section fade-up">
+      <div class="split-notes">
+        <article class="note-card">
+          <span class="section-kicker">Reading the chart</span>
+          <h3>Every bar sums to 100% within one factor level.</h3>
+          <p>
+            Watch how the darker segments grow or shrink as the factor level changes.
+          </p>
+          <div class="pill-row" style="margin-top: 12px;">
+            <span class="meta-pill" id="studentOutcomeDef">Outcome definition: —</span>
+          </div>
+        </article>
+        <article class="note-card">
+          <span class="section-kicker">About this view</span>
+          <h3>Four habits and signals, ranked by how strongly they align with your chosen outcome.</h3>
+          <p>
+            Pick an outcome, pick a factor — each bar shows how the outcome split shifts across that factor's levels.
+          </p>
+        </article>
+      </div>
+    </section>
+
   </main>
 
   <footer class="site-footer">

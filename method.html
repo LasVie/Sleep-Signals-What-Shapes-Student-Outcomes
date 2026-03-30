@@ -34,14 +34,10 @@
 
   <main class="page-shell">
     <section class="hero fade-up">
-      <div class="hero-grid">
+      <div style="display: flex; flex-direction: column; gap: 24px;">
         <div class="hero-copy">
           <span class="eyebrow">Data &amp; method</span>
           <h1>Sample profile, question wording, and caveats in one place.</h1>
-          <p>
-            This page exists so the audience does not need to guess what the project data contains, how the rankings were computed,
-            or how the new benchmark layer should be interpreted.
-          </p>
         </div>
         <aside class="hero-card" id="methodStats">
           <div class="loading-state">Loading dataset profile…</div>
@@ -56,7 +52,7 @@
           <h2>Who answered this survey?</h2>
         </div>
         <p>
-          The sample is imbalanced, so these distributions should be visible near the analysis instead of hidden in an appendix.
+          The sample has known imbalances — worth keeping in view when reading the charts.
         </p>
       </div>
       <div class="data-grid">
@@ -86,12 +82,9 @@
     <section class="section fade-up">
       <div class="section-head">
         <div>
-          <span class="section-kicker">Data layers</span>
-          <h2>What powers the redesigned site?</h2>
+          <span class="section-kicker">Data sources</span>
+          <h2>Where the data comes from</h2>
         </div>
-        <p>
-          The project now uses a primary survey layer for the main analysis and a benchmark layer for cross-country context. They should not be treated as one perfectly harmonized dataset.
-        </p>
       </div>
       <div class="data-grid">
         <article class="surface-card" id="dataSourceGrid">
@@ -109,7 +102,7 @@
       <div class="split-notes">
         <article class="note-card">
           <span class="section-kicker">Analysis logic</span>
-          <h3>What the site computes</h3>
+          <h3>How associations are measured</h3>
           <p>
             The shortlist uses Spearman rank correlation because the featured variables are ordinal. The chart views then show row-normalized distributions so users can still see how categories are distributed inside each factor level.
           </p>
@@ -136,10 +129,10 @@
       <div class="section-head">
         <div>
           <span class="section-kicker">Glossary</span>
-          <h2>Featured questions in the redesign</h2>
+          <h2>Survey questions behind each label</h2>
         </div>
         <p>
-          The redesign intentionally focuses on a smaller set of variables. These cards keep the wording visible so the audience can trace each label back to the survey.
+          Each card shows the exact survey wording behind the label used in the charts.
         </p>
       </div>
       <div class="glossary-grid" id="glossaryGrid">

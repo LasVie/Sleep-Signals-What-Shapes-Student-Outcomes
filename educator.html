@@ -33,39 +33,19 @@
   </header>
 
   <main class="page-shell">
-    <section class="hero fade-up">
-      <div class="hero-grid">
-        <div class="hero-copy">
-          <span class="eyebrow">Educator view</span>
-          <h1>Read ranking and distribution together, not as separate dashboards.</h1>
-          <p>
-            The heatmap below is the main evidence view. First choose an outcome, then select the factor you want to inspect from the ranked shortlist.
-          </p>
-        </div>
-        <aside class="hero-card">
-          <span class="section-kicker">Method in one sentence</span>
-          <h2>Ordinal categories are encoded in a consistent worse direction.</h2>
-          <p>
-            Spearman rank correlation is used only to sort the shortlist. The main chart is still a row-normalized heatmap so the outcome distribution remains visible.
-          </p>
-          <div class="pill-row">
-            <span class="sample-pill" id="educatorSample">Filtered sample: —</span>
-            <span class="meta-pill" id="educatorRho">Selected factor: —</span>
-          </div>
-        </aside>
-      </div>
-    </section>
 
+    <!-- 1. FILTERS — first thing visible on load -->
     <section class="section fade-up">
       <div class="controls-panel">
         <div class="section-head">
           <div>
-            <span class="section-kicker">Evidence controls</span>
-            <h2>Minimal filters, explicit caveats.</h2>
+            <span class="section-kicker">Educator view</span>
+            <h2>Filter the evidence.</h2>
           </div>
-          <p>
-            These controls are enough to inspect subgroup differences without turning the page back into a free-form dashboard.
-          </p>
+          <div class="pill-row">
+            <span class="sample-pill" id="educatorSample">Filtered sample: —</span>
+            <span class="meta-pill" id="educatorRho">Selected factor: —</span>
+          </div>
         </div>
         <div class="controls-grid">
           <div class="field">
@@ -84,14 +64,12 @@
       </div>
     </section>
 
+    <!-- 2. SHORTLIST + HEATMAP -->
     <section class="section fade-up">
       <div class="educator-layout">
         <aside class="surface-card">
           <span class="section-kicker">Ranked shortlist</span>
           <h3 class="panel-title">Select a factor</h3>
-          <p class="support-copy">
-            The shortlist includes the four primary factors plus the context factors needed for explanation.
-          </p>
           <div class="rank-list" id="rankingList">
             <div class="loading-state">Loading factor ranking…</div>
           </div>
@@ -99,7 +77,7 @@
 
         <div class="method-grid">
           <article class="chart-card">
-            <span class="section-kicker">Main evidence view</span>
+            <span class="section-kicker">Factor heatmap</span>
             <h3 id="educatorChartTitle">Outcome × factor heatmap</h3>
             <p id="educatorChartCopy">
               Darker cells mark a larger share within the selected factor level.
@@ -108,7 +86,7 @@
             <div class="legend" id="educatorLegend"></div>
             <div class="chart-shell" id="educatorChart"></div>
             <p class="footnote" id="educatorFootnote">
-              Each row is normalized independently, so the point is to compare pattern shape across factor levels. Use the row totals on the right to keep sample size in view.
+              Each row sums to 100%. Compare pattern shape across levels — row totals show sample size.
             </p>
           </article>
 
@@ -136,12 +114,33 @@
             <span class="section-kicker">Expanded scope</span>
             <h3>How this sample sits in broader context</h3>
             <p>
-              The local survey is now paired with a cross-country benchmark layer. Use <a href="context.html">Global Context</a> to compare the sample against reported student-sleep patterns in other countries.
+              This survey is paired with country-level records for broader context. Use <a href="context.html">Global Context</a> to compare sleep patterns across countries.
             </p>
           </article>
         </div>
       </div>
     </section>
+
+    <!-- 3. INTRO — moved below chart as a reference note -->
+    <section class="section fade-up">
+      <div class="split-notes">
+        <article class="note-card">
+          <span class="section-kicker">Reading the chart</span>
+          <h3>Factors ranked by association strength.</h3>
+          <p>
+            Select a factor from the shortlist to update the heatmap.
+          </p>
+        </article>
+        <article class="note-card">
+          <span class="section-kicker">About this view</span>
+          <h3>Ranking and distribution in one place.</h3>
+          <p>
+            First choose an outcome, then select the factor you want to inspect from the ranked shortlist.
+          </p>
+        </article>
+      </div>
+    </section>
+
   </main>
 
   <footer class="site-footer">
