@@ -1084,13 +1084,6 @@
         .attr("font-weight", 700)
         .text(formatBenchmarkValue(row[yKey], yKey));
 
-      root
-        .append("text")
-        .attr("x", innerWidth + 8)
-        .attr("y", y(row.country) + y.bandwidth() / 2 + 4)
-        .attr("fill", theme.faint)
-        .attr("font-size", 11)
-        .text(`${row.avg_sleep_hrs}h sleep`);
     });
 
     svg
@@ -1102,15 +1095,6 @@
       .attr("font-size", 13)
       .attr("font-weight", 700)
       .text(yLabel);
-
-    svg
-      .append("text")
-      .attr("x", width - margin.right)
-      .attr("y", 18)
-      .attr("fill", theme.faint)
-      .attr("font-size", 12)
-      .attr("text-anchor", "end")
-      .text("Right labels show average sleep");
   }
 
   function renderBenchmarkQuadrants(element, options) {
