@@ -10,12 +10,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const METRICS = [
     { key: "insomnia_pct", label: "Insomnia prevalence (%)", summary: "Average sleep hours vs insomnia prevalence" },
-    {
-      key: "pct_sleep_affects_academics",
-      label: "Students saying sleep affects academics (%)",
-      summary: "Average sleep hours vs reported academic impact",
-    },
-    { key: "academic_pressure_score", label: "Academic pressure score (1-5)", summary: "Average sleep hours vs academic pressure score" },
+    { key: "avg_sleep_hrs", label: "Average sleep hours", summary: "Countries ranked by average sleep hours" },
   ];
 
   const VIEW_MODES = [
@@ -44,7 +39,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       copy: (selected, metric) =>
         `${selected.country} is grouped by whether it sits above or below the visible average for sleep hours and ${metric.label.toLowerCase()}.`,
       footnote:
-        "Quadrant positions shift with the current region and metric filter because the split is based on the visible averages, not a fixed global threshold.",
+        "Quadrant positions split countries by whether they sit above or below the visible averages for sleep hours and insomnia prevalence.",
     },
   ];
 
@@ -59,7 +54,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   const detailElement = document.getElementById("contextDetail");
   const rankingTitleElement = document.getElementById("contextRankingTitle");
   const rankingElement = document.getElementById("contextRanking");
-  const insightElement = document.getElementById("contextInsight");
 
   const state = {
     rows: [],
@@ -89,10 +83,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   function renderViewModes() {
     viewModesElement.innerHTML = VIEW_MODES.map((mode) => {
       const activeClass = mode.key === state.viewMode ? " active" : "";
-      return `<button class="view-toggle${activeClass}" type="button" data-view-mode="${mode.key}">${mode.label}</button>`;
+      const isDisabled = mode.key === "scatter" && state.metricKey === "avg_sleep_hrs";
+      return `<button class="view-toggle${activeClass}" type="button" data-view-mode="${mode.key}"${isDisabled ? " disabled" : ""}>${mode.label}</button>`;
     }).join("");
 
-    viewModesElement.querySelectorAll("[data-view-mode]").forEach((button) => {
+    viewModesElement.querySelectorAll("[data-view-mode]:not([disabled])").forEach((button) => {
       button.addEventListener("click", () => {
         state.viewMode = button.dataset.viewMode;
         renderContext();
@@ -101,14 +96,17 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   function renderRanking(rows, metric) {
-    const sorted = [...rows].sort((left, right) => d3.descending(left[metric.key], right[metric.key])).slice(0, 5);
+    const rankable = rows.filter((row) => row[metric.key] != null);
+    const descending = metric.key === "insomnia_pct";
+    const sorted = [...rankable]
+      .sort((a, b) => descending ? d3.descending(a[metric.key], b[metric.key]) : d3.ascending(a[metric.key], b[metric.key]))
+      .slice(0, 5);
     const maxValue = d3.max(sorted, (row) => row[metric.key]) || 1;
-    rankingTitleElement.textContent = `Highest ${metric.label.toLowerCase()}`;
+    rankingTitleElement.textContent = metric.key === "insomnia_pct" ? "Highest insomnia prevalence" : "Shortest average sleep";
     rankingElement.innerHTML = sorted
       .map((row) => {
         const width = (row[metric.key] / maxValue) * 100;
-        const value =
-          metric.key === "academic_pressure_score" ? `${row[metric.key].toFixed(1)} / 5` : `${row[metric.key]}%`;
+        const value = metric.key === "avg_sleep_hrs" ? `${row[metric.key]}h` : `${row[metric.key]}%`;
         const selectedClass = row.country === state.selectedCountry ? " selected" : "";
         return `
           <button class="bar-button${selectedClass}" type="button" data-country="${escapeHtml(row.country)}">
@@ -161,14 +159,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   function renderContext() {
     const metric = METRICS.find((item) => item.key === state.metricKey);
-    const rows = state.rows;
+    const rows = state.rows.filter((row) => row[metric.key] != null);
     renderViewModes();
 
     if (!rows.length) {
-      chartElement.innerHTML = `<div class="error-state">No benchmark records available for this region.</div>`;
+      chartElement.innerHTML = `<div class="error-state">No benchmark records available.</div>`;
       detailElement.innerHTML = `<div class="error-state">No selected country available.</div>`;
       rankingElement.innerHTML = `<div class="error-state">No ranking available.</div>`;
-      insightElement.innerHTML = `<div class="error-state">No benchmark insight available.</div>`;
       legendElement.innerHTML = "";
       return;
     }
@@ -179,8 +176,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const selected = rows.find((row) => row.country === state.selectedCountry) || rows[0];
     const localReference = state.rows.find((row) => row.is_primary) || selected;
-    const localDelta = selected[state.metricKey] - localReference[state.metricKey];
-    const localDirection = localDelta >= 0 ? "higher" : "lower";
+    const localDelta = (selected.insomnia_pct != null && localReference.insomnia_pct != null)
+      ? selected.insomnia_pct - localReference.insomnia_pct
+      : null;
+    const localDirection = localDelta != null ? (localDelta >= 0 ? "higher" : "lower") : null;
     const viewMode = VIEW_MODES.find((mode) => mode.key === state.viewMode) || VIEW_MODES[0];
 
     chartTitleElement.textContent = viewMode.title(metric);
@@ -196,39 +195,27 @@ document.addEventListener("DOMContentLoaded", async () => {
       <div class="pill-row">
         <span class="meta-pill">${escapeHtml(selected.region)}</span>
         <span class="meta-pill">${selected.year}</span>
-        <span class="meta-pill">n = ${selected.n_students.toLocaleString()}</span>
+        ${selected.n_students ? `<span class="meta-pill">n = ${selected.n_students.toLocaleString()}</span>` : ""}
         ${selected.is_primary ? '<span class="scope-chip primary">primary dataset</span>' : ""}
       </div>
-      <p class="small-copy"><strong>Average sleep:</strong> ${selected.avg_sleep_hrs} hours</p>
-      <p class="small-copy"><strong>Insomnia prevalence:</strong> ${selected.insomnia_pct}%</p>
-      <p class="small-copy"><strong>Sleep affects academics:</strong> ${selected.pct_sleep_affects_academics}%</p>
-      <p class="small-copy"><strong>Academic pressure:</strong> ${selected.academic_pressure} (${selected.academic_pressure_score}/5)</p>
+      ${selected.avg_sleep_hrs != null ? `<p class="small-copy"><strong>Average sleep:</strong> ${selected.avg_sleep_hrs} hours</p>` : ""}
+      ${selected.insomnia_pct != null ? `<p class="small-copy"><strong>Insomnia prevalence:</strong> ${selected.insomnia_pct}%</p>` : ""}
+      ${selected.insomnia_pct != null && !selected.is_primary ? `
       <p class="small-copy">
         <strong>Compared with ${escapeHtml(localReference.country)}:</strong>
-        ${Math.abs(localDelta).toFixed(1)}
-        ${metric.key === "academic_pressure_score" ? " points" : " percentage points"}
-        ${localDirection} on ${escapeHtml(metric.label.toLowerCase())}.
-      </p>
+        ${Math.abs(localDelta).toFixed(1)} percentage points
+        ${localDirection} on insomnia prevalence.
+      </p>` : ""}
     `;
 
     renderRanking(rows, metric);
-
-    insightElement.innerHTML = `
-      <span class="section-kicker">Interpretation</span>
-      <h3>${escapeHtml(selected.country)} vs Bangladesh</h3>
-      <p class="small-copy">
-        Against the primary local sample in <strong>${escapeHtml(localReference.country)}</strong>, ${escapeHtml(selected.country)} is
-        ${Math.abs(localDelta).toFixed(1)} ${metric.key === "academic_pressure_score" ? "points" : "percentage points"}
-        ${localDirection} on ${escapeHtml(metric.label.toLowerCase())}.
-      </p>
-      <p class="small-copy">
-        These benchmark values come from different studies. Direct comparison should be treated as indicative context, not a pooled finding.
-      </p>
-    `;
   }
 
   metricSelect.addEventListener("change", (event) => {
     state.metricKey = event.target.value;
+    if (state.metricKey === "avg_sleep_hrs" && state.viewMode === "scatter") {
+      state.viewMode = "ranked";
+    }
     renderContext();
   });
 
@@ -271,7 +258,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         <article class="stat-card">
           <div class="stat-label">Interactivity</div>
           <div class="stat-value">Click + hover</div>
-          <div class="stat-copy">Hover any country for values and click to pin the comparison detail card.</div>
         </article>
       </div>
     `;
@@ -283,6 +269,5 @@ document.addEventListener("DOMContentLoaded", async () => {
     chartElement.innerHTML = message;
     detailElement.innerHTML = message;
     rankingElement.innerHTML = message;
-    insightElement.innerHTML = message;
   }
 });
