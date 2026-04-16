@@ -98,9 +98,21 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   function renderLegendForMode(outcome) {
     if (state.viewMode === "risk") {
+      const worseLabels = window.SleepSignalsCharts.escapeHtml(outcome.order.slice(-2).join(" + "));
       legendElement.innerHTML = `
-        <span class="legend-item">Focus: ${window.SleepSignalsCharts.escapeHtml(outcome.order.slice(-2).join(" + "))}</span>
+        <span class="legend-item">Focus: ${worseLabels}</span>
         <span class="legend-item">Dashed line = visible average</span>
+        <span class="formula-tooltip-wrapper">
+          <span class="formula-icon" title="">ⓘ Formula</span>
+          <span class="formula-tooltip">
+            <span class="formula-label">Risk Score&nbsp;=&nbsp;</span>
+            <span class="formula-fraction">
+              <span class="formula-numerator">Count of (${worseLabels})</span>
+              <span class="formula-denominator">Total respondents in category</span>
+            </span>
+            <span class="formula-label">&nbsp;×&nbsp;100</span>
+          </span>
+        </span>
       `;
       return;
     }

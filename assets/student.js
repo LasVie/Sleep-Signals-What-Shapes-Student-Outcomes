@@ -99,9 +99,21 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   function renderLegendForMode(outcome) {
     if (state.viewMode === "risk") {
+      const worseLabels = window.SleepSignalsCharts.escapeHtml(outcome.order.slice(-2).join(" + "));
       legendElement.innerHTML = `
-        <span class="legend-item">Focus: ${window.SleepSignalsCharts.escapeHtml(outcome.order.slice(-2).join(" + "))}</span>
+        <span class="legend-item">Focus: ${worseLabels}</span>
         <span class="legend-item">Dashed line = visible average</span>
+        <span class="formula-tooltip-wrapper">
+          <span class="formula-icon" title="">ⓘ Formula</span>
+          <span class="formula-tooltip">
+            <span class="formula-label">Risk Score&nbsp;=&nbsp;</span>
+            <span class="formula-fraction">
+              <span class="formula-numerator">Count of (${worseLabels})</span>
+              <span class="formula-denominator">Total respondents in category</span>
+            </span>
+            <span class="formula-label">&nbsp;×&nbsp;100</span>
+          </span>
+        </span>
       `;
       return;
     }
@@ -163,6 +175,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         const factor = item.factor;
         const width = Math.min((item.abs / 0.5) * 100, 100);
         const selectedClass = item.factorKey === state.factorKey ? " selected" : "";
+        const filledCells = Math.max(1, Math.round(width / 10));
+        const strengthClass = associationStrength(item.abs).toLowerCase();
+        const cells = Array.from({ length: 10 }, (_, i) =>
+          `<span class="impact-cell${i < filledCells ? " filled" : ""}"></span>`
+        ).join("");
         return `
           <article class="insight-card${selectedClass}">
             <button class="insight-button" data-factor="${factor.key}" style="display:flex;flex-direction:column;height:100%">
@@ -176,7 +193,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <span class="meta-pill">${associationStrength(item.abs)} association</span>
               </div>
               <div class="impact-meter" style="margin-top:auto;padding-top:12px">
-                <div class="impact-bar"><span class="impact-fill" style="width:${width}%"></span></div>
+                <div class="impact-cells impact-cells--${strengthClass}">${cells}</div>
               </div>
             </button>
           </article>
