@@ -81,7 +81,7 @@
         "Never",
       ],
       question: COLUMNS.q13,
-      summary: "Exercise is the clearest primary factor that moves in a protective direction.",
+      summary: "Exercise ranks strongly here, but the direction is counterintuitive in this survey and should be interpreted cautiously.",
     },
     {
       key: "concentration",
@@ -460,11 +460,11 @@
           "of frequent caffeine users also report major or severe deadline disruption.",
       },
       {
-        title: "Exercise is the strongest protective primary factor",
+        title: "Exercise shows a strong inverse rank pattern",
         chip: "Context for action",
         metric: `ρ = ${exerciseRanking.rho.toFixed(2)}<span class="rho-info" data-tip="Rank correlation (−1 to +1). Positive = worse factor aligns with worse outcome.">?</span>`,
         body:
-          "The negative direction means more exercise lines up with less assignment impact in this dataset.",
+          "The negative direction comes from the coded order, but the underlying pattern is counterintuitive and should be explained cautiously.",
       },
     ];
   }

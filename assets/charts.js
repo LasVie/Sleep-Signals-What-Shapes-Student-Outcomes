@@ -101,6 +101,8 @@
   }
 
   function formatBenchmarkValue(value, key) {
+    if (value == null || Number.isNaN(value)) return "Unavailable";
+    if (key === "avg_sleep_hrs") return `${Number(value).toFixed(1)}h`;
     if (key === "academic_pressure_score") return `${value.toFixed(1)} / 5`;
     return `${value}%`;
   }
@@ -754,6 +756,8 @@
       return;
     }
     const maxPct = d3.max(items, (item) => item.pct) || 1;
+    const background =
+      colorLeft === colorRight ? colorLeft : `linear-gradient(90deg, ${colorLeft}, ${colorRight})`;
     items.forEach((item) => {
       const row = document.createElement("div");
       row.className = "bar-row";
@@ -763,7 +767,7 @@
           <span>${Math.round(item.pct * 100)}% <span class="muted">(${item.count})</span></span>
         </div>
         <div class="bar-track">
-          <span class="bar-fill" style="width:${(item.pct / maxPct) * 100}%; background:linear-gradient(90deg, ${colorLeft}, ${colorRight});"></span>
+          <span class="bar-fill" style="width:${(item.pct / maxPct) * 100}%; background:${background};"></span>
         </div>
       `;
       element.appendChild(row);
@@ -964,7 +968,10 @@
       return;
     }
 
-    const sorted = [...rows].sort((left, right) => d3.descending(left[yKey], right[yKey]));
+    const descending = yKey !== "avg_sleep_hrs";
+    const sorted = [...rows].sort((left, right) =>
+      descending ? d3.descending(left[yKey], right[yKey]) : d3.ascending(left[yKey], right[yKey])
+    );
     const width = Math.max(element.clientWidth || 840, 700);
     const height = Math.max(380, sorted.length * 36 + 112);
     const margin = { top: 30, right: 122, bottom: 52, left: 226 };
@@ -1066,7 +1073,10 @@
           event,
           `<strong>${escapeHtml(row.country)}</strong>${escapeHtml(row.region)}<br>${escapeHtml(
             yLabel
-          )}: ${formatBenchmarkValue(row[yKey], yKey)}<br>Average sleep: ${row.avg_sleep_hrs}h`
+          )}: ${formatBenchmarkValue(row[yKey], yKey)}<br>Average sleep: ${formatBenchmarkValue(
+            row.avg_sleep_hrs,
+            "avg_sleep_hrs"
+          )}`
         );
       })
       .on("mouseleave", hideTooltip)

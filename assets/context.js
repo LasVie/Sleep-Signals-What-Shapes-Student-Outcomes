@@ -28,9 +28,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       label: "Ranked bars",
       title: (metric) => `${metric.label} across visible countries`,
       copy: (selected, metric) =>
-        `${selected.country} stays highlighted, while the bars rank every visible country on ${metric.label.toLowerCase()} and show sleep hours on the right.`,
+        `${selected.country} stays highlighted, while the bars rank the visible benchmark records by ${metric.label.toLowerCase()}.`,
       footnote:
-        "Countries are ranked only inside the current filter. Sleep hours stay visible as a side label rather than a second axis.",
+        "The ranking uses the currently visible benchmark records. Treat it as a descriptive comparison, not a pooled estimate.",
     },
     {
       key: "quadrants",
@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       copy: (selected, metric) =>
         `${selected.country} is grouped by whether it sits above or below the visible average for sleep hours and ${metric.label.toLowerCase()}.`,
       footnote:
-        "Quadrant positions split countries by whether they sit above or below the visible averages for sleep hours and insomnia prevalence.",
+        "Quadrant positions shift with the selected metric because the split is based on the visible averages, not a fixed threshold.",
     },
   ];
 
@@ -62,6 +62,29 @@ document.addEventListener("DOMContentLoaded", async () => {
     viewMode: "scatter",
   };
 
+  function rowsWithMetric(metric) {
+    return state.rows.filter((row) => row[metric.key] != null);
+  }
+
+  function rowsForTwoAxisViews(metric) {
+    return rowsWithMetric(metric).filter((row) => row.avg_sleep_hrs != null);
+  }
+
+  function isViewEnabled(modeKey, metric) {
+    if (modeKey === "ranked") {
+      return rowsWithMetric(metric).length > 0;
+    }
+
+    if (metric.key === "avg_sleep_hrs") {
+      return false;
+    }
+
+    const comparableRows = rowsForTwoAxisViews(metric).length;
+    if (modeKey === "scatter") return comparableRows >= 3;
+    if (modeKey === "quadrants") return comparableRows >= 4;
+    return true;
+  }
+
   function buildRegionLegend() {
     legendElement.innerHTML = Object.entries(REGION_COLORS)
       .map(([region, color]) => {
@@ -80,10 +103,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     buildRegionLegend();
   }
 
-  function renderViewModes() {
+  function renderViewModes(metric) {
     viewModesElement.innerHTML = VIEW_MODES.map((mode) => {
       const activeClass = mode.key === state.viewMode ? " active" : "";
-      const isDisabled = mode.key === "scatter" && state.metricKey === "avg_sleep_hrs";
+      const isDisabled = !isViewEnabled(mode.key, metric);
       return `<button class="view-toggle${activeClass}" type="button" data-view-mode="${mode.key}"${isDisabled ? " disabled" : ""}>${mode.label}</button>`;
     }).join("");
 
@@ -101,24 +124,29 @@ document.addEventListener("DOMContentLoaded", async () => {
     const sorted = [...rankable]
       .sort((a, b) => descending ? d3.descending(a[metric.key], b[metric.key]) : d3.ascending(a[metric.key], b[metric.key]))
       .slice(0, 5);
-    const maxValue = d3.max(sorted, (row) => row[metric.key]) || 1;
     rankingTitleElement.textContent = metric.key === "insomnia_pct" ? "Highest insomnia prevalence" : "Shortest average sleep";
     rankingElement.innerHTML = sorted
-      .map((row) => {
-        const width = (row[metric.key] / maxValue) * 100;
-        const value = metric.key === "avg_sleep_hrs" ? `${row[metric.key]}h` : `${row[metric.key]}%`;
+      .map((row, index) => {
+        const value = metric.key === "avg_sleep_hrs" ? `${row[metric.key].toFixed(1)}h` : `${row[metric.key]}%`;
+        const supportingMetric =
+          metric.key === "avg_sleep_hrs"
+            ? row.insomnia_pct != null
+              ? `Insomnia prevalence: ${row.insomnia_pct}%`
+              : "Insomnia prevalence unavailable"
+            : row.avg_sleep_hrs != null
+              ? `Average sleep: ${row.avg_sleep_hrs.toFixed(1)}h`
+              : "Average sleep unavailable";
         const selectedClass = row.country === state.selectedCountry ? " selected" : "";
         return `
-          <button class="bar-button${selectedClass}" type="button" data-country="${escapeHtml(row.country)}">
-            <div class="bar-row">
-              <div class="bar-topline">
-                <span>${escapeHtml(row.country)}</span>
-                <span>${value}</span>
-              </div>
-              <div class="bar-track">
-                <span class="bar-fill" style="width:${width}%; background:linear-gradient(90deg, ${REGION_COLORS[row.region] || "#4c7a9f"}, #132431);"></span>
-              </div>
+          <button class="context-rank-card${selectedClass}" type="button" data-country="${escapeHtml(row.country)}">
+            <div class="context-rank-topline">
+              <span class="context-rank-index">#${index + 1}</span>
+              <span class="meta-pill">${escapeHtml(row.region)}</span>
             </div>
+            <h4 class="context-rank-country">${escapeHtml(row.country)}</h4>
+            <div class="context-rank-value">${value}</div>
+            <p class="small-copy">${escapeHtml(supportingMetric)}</p>
+            <p class="small-copy">${row.year}${row.n_students ? ` · n = ${row.n_students.toLocaleString()}` : ""}</p>
           </button>
         `;
       })
@@ -159,8 +187,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   function renderContext() {
     const metric = METRICS.find((item) => item.key === state.metricKey);
-    const rows = state.rows.filter((row) => row[metric.key] != null);
-    renderViewModes();
+    if (!isViewEnabled(state.viewMode, metric)) {
+      state.viewMode = "ranked";
+    }
+    const rows = state.rows.filter((row) => {
+      if (row[metric.key] == null) return false;
+      if (state.viewMode === "ranked") return true;
+      return row.avg_sleep_hrs != null;
+    });
+    renderViewModes(metric);
 
     if (!rows.length) {
       chartElement.innerHTML = `<div class="error-state">No benchmark records available.</div>`;
@@ -176,8 +211,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const selected = rows.find((row) => row.country === state.selectedCountry) || rows[0];
     const localReference = state.rows.find((row) => row.is_primary) || selected;
-    const localDelta = (selected.insomnia_pct != null && localReference.insomnia_pct != null)
-      ? selected.insomnia_pct - localReference.insomnia_pct
+    const localDelta = selected[metric.key] != null && localReference[metric.key] != null
+      ? selected[metric.key] - localReference[metric.key]
       : null;
     const localDirection = localDelta != null ? (localDelta >= 0 ? "higher" : "lower") : null;
     const viewMode = VIEW_MODES.find((mode) => mode.key === state.viewMode) || VIEW_MODES[0];
@@ -200,11 +235,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       </div>
       ${selected.avg_sleep_hrs != null ? `<p class="small-copy"><strong>Average sleep:</strong> ${selected.avg_sleep_hrs} hours</p>` : ""}
       ${selected.insomnia_pct != null ? `<p class="small-copy"><strong>Insomnia prevalence:</strong> ${selected.insomnia_pct}%</p>` : ""}
-      ${selected.insomnia_pct != null && !selected.is_primary ? `
+      ${localDelta != null && !selected.is_primary ? `
       <p class="small-copy">
         <strong>Compared with ${escapeHtml(localReference.country)}:</strong>
-        ${Math.abs(localDelta).toFixed(1)} percentage points
-        ${localDirection} on insomnia prevalence.
+        ${Math.abs(localDelta).toFixed(1)} ${metric.key === "avg_sleep_hrs" ? "hours" : "percentage points"}
+        ${localDirection} on ${escapeHtml(metric.label.toLowerCase())}.
       </p>` : ""}
     `;
 
@@ -213,7 +248,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   metricSelect.addEventListener("change", (event) => {
     state.metricKey = event.target.value;
-    if (state.metricKey === "avg_sleep_hrs" && state.viewMode === "scatter") {
+    const metric = METRICS.find((item) => item.key === state.metricKey);
+    if (!isViewEnabled(state.viewMode, metric)) {
       state.viewMode = "ranked";
     }
     renderContext();
@@ -242,13 +278,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       <span class="section-kicker">Benchmark snapshot</span>
       <h2>Multiple datasets, one comparative lens.</h2>
       <p>
-        The benchmark layer covers ${state.rows.length} directly sourced, peer-reviewed country records, with the local survey preserved as the primary reference point.
+        The benchmark layer covers ${state.rows.length} country records drawn from named sources, with the local survey preserved as the primary reference point. Not every record reports every metric, so the visible comparison set changes by view.
       </p>
       <div class="stat-grid">
         <article class="stat-card">
           <div class="stat-label">Countries</div>
           <div class="stat-value">${state.rows.length}</div>
-          <div class="stat-copy">Each record comes from a named peer-reviewed study.</div>
+          <div class="stat-copy">Each record is paired with a cited source in the detail card.</div>
         </article>
         <article class="stat-card">
           <div class="stat-label">Primary benchmark</div>

@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       </div>
       <p class="hero-note">
         Year-of-study and gender distributions are both skewed. Keep these imbalances in mind when reading the charts.
-        Benchmark records come from different studies and should be read as comparative context, not a pooled dataset.
+        Benchmark records come from different studies, and not every record reports every metric, so they should be read as comparative context rather than a pooled dataset.
       </p>
     `;
 
@@ -89,12 +89,12 @@ document.addEventListener("DOMContentLoaded", async () => {
               <span>${benchmarkRows.length} country records</span>
             </div>
             <p class="small-copy">
-              Used only for comparative context. These records come from different studies and are not treated as one pooled harmonized sample.
+              Used only for comparative context. These records come from different studies, do not all report the same metrics, and are not treated as one pooled harmonized sample.
             </p>
           </div>
         </div>
       `;
-      renderBarList(benchmarkRegionProfileElement, regionCounts, "#d59a52", "#2b7a78");
+      renderBarList(benchmarkRegionProfileElement, regionCounts, "#d59a52", "#d59a52");
     } else {
       dataSourceElement.innerHTML = `
         <span class="section-kicker">Source overview</span>
@@ -106,10 +106,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       benchmarkRegionProfileElement.innerHTML = `<div class="error-state">Benchmark coverage is unavailable.</div>`;
     }
 
-    renderBarList(yearProfileElement, profiles.year, "#4c7a9f", "#2b7a78");
-    renderBarList(genderProfileElement, profiles.gender, "#4c7a9f", "#2b7a78");
-    renderBarList(performanceProfileElement, profiles.performance, "#8bb7b0", "#b85a3d");
-    renderBarList(deadlineProfileElement, profiles.deadlines, "#8bb7b0", "#b85a3d");
+    renderBarList(yearProfileElement, profiles.year, "#4c7a9f", "#4c7a9f");
+    renderBarList(genderProfileElement, profiles.gender, "#4c7a9f", "#4c7a9f");
+    renderBarList(performanceProfileElement, profiles.performance, "#b85a3d", "#b85a3d");
+    renderBarList(deadlineProfileElement, profiles.deadlines, "#b85a3d", "#b85a3d");
 
     const glossaryItems = [
       ...FACTORS.map((factor) => ({

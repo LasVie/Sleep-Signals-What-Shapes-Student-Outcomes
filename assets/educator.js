@@ -167,7 +167,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     if (!state.factorKey || !ranking.some((item) => item.factorKey === state.factorKey)) {
-      state.factorKey = ranking[0].factorKey;
+      const preferred = ranking.find((item) => item.rho >= 0) || ranking[0];
+      state.factorKey = preferred.factorKey;
     }
 
     rankingElement.innerHTML = ranking
